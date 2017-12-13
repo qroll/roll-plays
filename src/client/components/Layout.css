@@ -1,0 +1,24 @@
+.nav-bar {
+    background-color: #fdfdfd;
+    border: 1px solid #ebebeb;
+    border-bottom: 3px solid #ebebeb;
+    display: flex;
+}
+
+.nav-link {
+    color: #333333;
+    font-family: "Roboto Condensed";
+    padding: 10px 10px 7px 10px;
+}
+
+.nav-link:hover {
+    border-bottom: 3px solid #f07241;
+    margin-bottom: -3px;
+}
+
+@media (min-width: 720px) {
+    .nav-bar {
+        margin: 10px auto;
+        max-width: 720px;
+    }
+}
