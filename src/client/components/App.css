@@ -3,8 +3,8 @@
     width: 100%;
 }
 
-@media (min-width: 720px) {
+@media (min-width: 768px) {
     .App {
-        max-width: 720px;
+        max-width: 768px;
     }
 }

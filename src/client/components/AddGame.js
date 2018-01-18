@@ -11,10 +11,11 @@ class AddGame extends React.Component {
         description: "",
         releaseDate: "",
         inLibrary: "",
-        price: "",
         purchasePrice: "",
+        bundleName: "",
         status: "",
-        rating: ""
+        rating: "",
+        bundleField: false
     };
 
     handleOnAppIDChange = e => {
@@ -41,6 +42,12 @@ class AddGame extends React.Component {
     handleOnClick = () => {
         console.log("whoo");
         this.setState({ game: "" });
+    };
+
+    toggleBundleField = () => {
+        this.setState(prevState => {
+            return { bundleField: !prevState.bundleField };
+        });
     };
 
     render() {
@@ -96,6 +103,60 @@ class AddGame extends React.Component {
                         onChange={this.handleInputChange}
                     />
                     <span className="input-label">In library</span>
+                </label>
+                {this.state.inLibrary && (
+                    <label className="form-control">
+                        <span className="input-label">Purchase price</span>
+                        <input
+                            type="text"
+                            className="input-text"
+                            name="purchasePrice"
+                            value={this.state.purchasePrice}
+                            onChange={this.handleInputChange}
+                        />
+                    </label>
+                )}
+                <label className="form-control">
+                    <input
+                        type="checkbox"
+                        className="input-checkbox"
+                        name="isFromBundle"
+                        checked={this.state.isFromBundle}
+                        onChange={this.toggleBundleField}
+                    />
+                    <span className="input-label">In bundle</span>
+                </label>
+                {this.state.bundleField && (
+                    <label className="form-control">
+                        <span className="input-label">Bundle</span>
+                        <input
+                            type="text"
+                            className="input-text"
+                            name="bundleName"
+                            value={this.state.bundleName}
+                            onChange={this.handleInputChange}
+                        />
+                    </label>
+                )}
+                <label className="form-control">
+                    <span className="input-label">Status</span>
+                    <input
+                        type="text"
+                        className="input-text"
+                        name="status"
+                        value={this.state.status}
+                        onChange={this.handleInputChange}
+                    />
+                </label>
+                <label className="form-control">
+                    <span className="input-label">Rating</span>
+                    <input
+                        type="text"
+                        className="input-text"
+                        name="rating"
+                        value={this.state.rating}
+                        onChange={this.handleInputChange}
+                    />
                 </label>
                 <button onClick={this.handleOnClick} className="button">
                     Add

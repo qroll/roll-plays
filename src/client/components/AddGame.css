@@ -1,32 +1,122 @@
 .add-game-box {
     display: flex;
+    flex-direction: column;
     margin: 10px;
     padding: 20px;
 }
 
+.form-control {
+    align-items: left;
+    display: flex;
+    flex-direction: column;
+    margin: 5px;
+}
+
+.input-label {
+    flex: 1 auto;
+    font-family: "Roboto Condensed";
+    font-size: 0.9em;
+    padding: 5px 0;
+}
+
 .input-text {
-    border: 1px solid #ebebeb;
-    border-right: 0;
-    flex: 1 1;
+    border: none;
+    border-bottom: 1px solid #e0e0e0;
+    box-sizing: border-box;
+    flex: 1 auto;
     padding: 5px;
     outline: none;
+    width: 100%;
+}
+
+.input-label:hover > .input-text,
+.input-text:hover {
+    border: none;
+    border-bottom: 2px solid #ebebeb;
+    margin-bottom: -1px;
 }
 
 .input-text:focus {
-    border: 1px solid #f07241;
+    border: none;
+    border-bottom: 2px solid #f07241;
+    margin-bottom: -1px;
+}
+
+.input-text::placeholder {
+    color: #e0e0e0;
+}
+
+.input-checkbox {
+    margin: 0;
+    opacity: 0;
+    order: 1;
+}
+
+.input-checkbox + .input-label {
+    order: 0; /* force label to appear before checkbox */
+}
+
+.input-checkbox + .input-label::after {
+    box-sizing: border-box;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    content: "";
+    display: block;
+    height: 1em;
+    margin: 5px 0;
+    width: 1em;
+}
+
+.input-label:hover > .input-checkbox {
+    border: 2px solid #ebebeb;
+}
+
+.input-checkbox + .input-label:hover::after {
+    border: 2px solid #ebebeb;
+}
+
+.input-checkbox:checked + .input-label::after {
+    background-color: #f07241;
+}
+
+@media (min-width: 768px) {
+    .form-control {
+        align-items: center;
+        flex-direction: row;
+        position: relative;
+    }
+
+    .input-label {
+        box-sizing: border-box;
+        flex: 0 auto;
+        padding: 0 10px 0 0;
+        text-align: right;
+        width: 16%;
+    }
+
+    .input-text {
+        flex: 1 0px;
+    }
+
+    .input-checkbox + .input-label::after {
+        display: inline;
+        margin: 0;
+        position: absolute;
+        left: 16%;
+    }
 }
 
 .button {
-    border: 1px solid #ebebeb;
+    align-self: center;
+    border: 1px solid #e0e0e0;
     background-color: #ebebeb;
-    color: #ffffff;
-    flex: 0 0;
+    color: #333333;
+    flex: 0 0 auto;
     outline: none;
     padding: 5px;
-    transition: all 0.3s ease;
+    width: fit-content;
 }
 
 .button:hover {
-    background-color: #f07241;
-    color: #ffffff;
+    background-color: #e0e0e0;
 }
