@@ -28,11 +28,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "dev": "npm run dev:client & npm run dev:server",
-    "dev:client": "npm run start",
-    "dev:server": "nodemon src/server/server.js --exec babel-node",
-    "precommit": "pretty-quick --staged"
+    "eject": "react-scripts eject"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

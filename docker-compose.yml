@@ -8,15 +8,13 @@ services:
     build: ./backend/
     ports:
       - "9000:9000"
-    volumes:
-      - ./backend:/app
     depends_on:
+      - mongodb
+    links:
       - mongodb
   frontend:
     build: ./frontend/
     ports:
       - "3000:3000"
-    volumes:
-      - ./frontend:/app
     depends_on:
       - backend
