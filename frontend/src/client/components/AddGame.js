@@ -1,4 +1,5 @@
 import React from "react";
+import Autocomplete from "react-autocomplete";
 
 import { UserSession } from "./Session";
 
@@ -116,6 +117,39 @@ class AddGame extends React.Component {
                         />
                     </label>
                 )}
+                <Autocomplete
+                    getItemValue={item => item.label}
+                    items={[
+                        { label: "apple" },
+                        { label: "banana" },
+                        { label: "pear" }
+                    ]}
+                    renderItem={(item, isHighlighted) => (
+                        <div
+                            key={item.label}
+                            style={{
+                                background: isHighlighted
+                                    ? "lightgray"
+                                    : "white"
+                            }}
+                        >
+                            {item.label}
+                        </div>
+                    )}
+                    renderInput={props => (
+                        <input {...props} style={{ width: "100%" }} />
+                    )}
+                    menuStyle={{
+                        backgroundColor: "red",
+                        position: "absolute",
+                        zIndex: 1
+                    }}
+                    value={this.state.bundleName}
+                    onChange={e =>
+                        this.setState({ bundleName: e.target.value })
+                    }
+                    onSelect={value => this.setState({ bundleName: value })}
+                />
                 <label className="form-control">
                     <input
                         type="checkbox"
