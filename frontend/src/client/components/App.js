@@ -4,7 +4,7 @@ import { Route } from "react-router-dom";
 import configureStore from "../store";
 import Layout from "./Layout";
 import Sample from "./Sample";
-import Rank from "./Rank";
+import Ranking from "./Ranking";
 import AddGame from "./AddGame";
 
 import "./App.css";
@@ -19,7 +19,7 @@ class App extends Component {
                     <div className="App">
                         <Route path="/sample" component={Sample} />
                         <Route path="/rank" component={AddGame} />
-                        <Route path="/rank" component={Rank} />
+                        <Route path="/rank" component={Ranking} />
                     </div>
                 </Layout>
             </Provider>

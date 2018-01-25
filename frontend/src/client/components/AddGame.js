@@ -1,9 +1,22 @@
 import React from "react";
-import Autocomplete from "react-autocomplete";
+import styled from "styled-components";
 
-import { UserSession } from "./Session";
+import {
+    FormControl,
+    Label,
+    TextInput,
+    Checkbox,
+    Toggle,
+    Button,
+    AutocompleteInput
+} from "./Form";
 
-import "./AddGame.css";
+const AddGameBox = styled.div`
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+    padding: 20px;
+`;
 
 class AddGame extends React.Component {
     state = {
@@ -53,149 +66,122 @@ class AddGame extends React.Component {
 
     render() {
         return (
-            <div className="add-game-box">
-                <label className="form-control">
-                    <span className="input-label">App ID</span>
-                    <input
+            <AddGameBox>
+                <FormControl>
+                    <Label>App ID</Label>
+                    <TextInput
                         type="text"
-                        className="input-text"
                         name="appID"
                         value={this.state.appID}
                         placeholder="App ID on Steam"
                         onChange={this.handleOnAppIDChange}
                     />
-                </label>
-                <label className="form-control">
-                    <span className="input-label">Title</span>
-                    <input
+                </FormControl>
+                <FormControl>
+                    <Label>Title</Label>
+                    <TextInput
                         type="text"
-                        className="input-text"
                         name="title"
                         value={this.state.title}
                         onChange={this.handleInputChange}
                     />
-                </label>
-                <label className="form-control">
-                    <span className="input-label">Description</span>
-                    <input
+                </FormControl>
+                <FormControl>
+                    <Label>Description</Label>
+                    <TextInput
                         type="text"
-                        className="input-text"
                         name="description"
                         value={this.state.description}
                         onChange={this.handleInputChange}
                     />
-                </label>
-                <label className="form-control">
-                    <span className="input-label">Release date</span>
-                    <input
+                </FormControl>
+                <FormControl>
+                    <Label>Release date</Label>
+                    <TextInput
                         type="text"
-                        className="input-text"
                         name="releaseDate"
                         value={this.state.releaseDate}
                         onChange={this.handleInputChange}
                     />
-                </label>
-                <label className="form-control">
-                    <input
-                        type="checkbox"
-                        className="input-checkbox"
-                        name="inLibrary"
-                        checked={this.state.inLibrary}
-                        onChange={this.handleInputChange}
-                    />
-                    <span className="input-label">In library</span>
-                </label>
+                </FormControl>
+                <FormControl>
+                    <Toggle>
+                        <Checkbox
+                            type="checkbox"
+                            name="inLibrary"
+                            checked={this.state.inLibrary}
+                            onChange={this.handleInputChange}
+                        />
+                        <Label>In library</Label>
+                    </Toggle>
+                </FormControl>
                 {this.state.inLibrary && (
-                    <label className="form-control">
-                        <span className="input-label">Purchase price</span>
-                        <input
+                    <FormControl>
+                        <Label>Purchase price</Label>
+                        <TextInput
                             type="text"
-                            className="input-text"
                             name="purchasePrice"
                             value={this.state.purchasePrice}
                             onChange={this.handleInputChange}
                         />
-                    </label>
+                    </FormControl>
                 )}
-                <Autocomplete
-                    getItemValue={item => item.label}
-                    items={[
-                        { label: "apple" },
-                        { label: "banana" },
-                        { label: "pear" }
-                    ]}
-                    renderItem={(item, isHighlighted) => (
-                        <div
-                            key={item.label}
-                            style={{
-                                background: isHighlighted
-                                    ? "lightgray"
-                                    : "white"
-                            }}
-                        >
-                            {item.label}
-                        </div>
-                    )}
-                    renderInput={props => (
-                        <input {...props} style={{ width: "100%" }} />
-                    )}
-                    menuStyle={{
-                        backgroundColor: "red",
-                        position: "absolute",
-                        zIndex: 1
-                    }}
-                    value={this.state.bundleName}
-                    onChange={e =>
-                        this.setState({ bundleName: e.target.value })
-                    }
-                    onSelect={value => this.setState({ bundleName: value })}
-                />
-                <label className="form-control">
-                    <input
-                        type="checkbox"
-                        className="input-checkbox"
-                        name="isFromBundle"
-                        checked={this.state.isFromBundle}
-                        onChange={this.toggleBundleField}
-                    />
-                    <span className="input-label">In bundle</span>
-                </label>
-                {this.state.bundleField && (
-                    <label className="form-control">
-                        <span className="input-label">Bundle</span>
-                        <input
-                            type="text"
-                            className="input-text"
-                            name="bundleName"
-                            value={this.state.bundleName}
-                            onChange={this.handleInputChange}
+                <FormControl>
+                    <Toggle>
+                        <Checkbox
+                            type="checkbox"
+                            name="isFromBundle"
+                            checked={this.state.isFromBundle}
+                            onChange={this.toggleBundleField}
                         />
-                    </label>
+                        <Label>In bundle</Label>
+                    </Toggle>
+                </FormControl>
+                {this.state.bundleField && (
+                    <FormControl>
+                        <Label>Bundle name</Label>
+                        <AutocompleteInput
+                            shouldItemRender={(item, value) =>
+                                item.label
+                                    .toLowerCase()
+                                    .indexOf(value.toLowerCase()) > -1
+                            }
+                            getItemValue={item => item.label}
+                            items={[
+                                { id: "1", label: "apple" },
+                                { id: "2", label: "banana" },
+                                { id: "3", label: "pear" }
+                            ]}
+                            value={this.state.bundleName}
+                            onChange={e =>
+                                this.setState({ bundleName: e.target.value })
+                            }
+                            onSelect={value =>
+                                this.setState({ bundleName: value })
+                            }
+                        />
+                    </FormControl>
                 )}
-                <label className="form-control">
-                    <span className="input-label">Status</span>
-                    <input
+                <FormControl>
+                    <Label>Status</Label>
+                    <TextInput
                         type="text"
-                        className="input-text"
                         name="status"
                         value={this.state.status}
                         onChange={this.handleInputChange}
                     />
-                </label>
-                <label className="form-control">
-                    <span className="input-label">Rating</span>
-                    <input
+                </FormControl>
+                <FormControl>
+                    <Label>Rating</Label>
+                    <TextInput
                         type="text"
-                        className="input-text"
                         name="rating"
                         value={this.state.rating}
                         onChange={this.handleInputChange}
                     />
-                </label>
-                <button onClick={this.handleOnClick} className="button">
-                    Add
-                </button>
-            </div>
+                </FormControl>
+                <Button onClick={this.handleOnClick}>Add</Button>
+            </AddGameBox>
         );
     }
 }
