@@ -1,8 +1,7 @@
-const express = require("express");
-
+import express from "express";
 const router = express.Router();
 
-const Game = require("../models/game");
+import Game from "../models/game";
 
 router.get("/", (req, res) => {
     Game.find()
@@ -28,4 +27,4 @@ router.post("/", (req, res) => {
         });
 });
 
-module.exports = router;
+export default router;

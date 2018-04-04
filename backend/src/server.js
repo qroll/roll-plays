@@ -1,56 +1,55 @@
-if (!process.env.NODE_ENV) {
-    require("dotenv").config();
-}
+import "./config";
 
-const express = require("express");
-const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
-const session = require("express-session");
-const MongoDBStore = require("connect-mongodb-session")(session);
-const bodyParser = require("body-parser");
-const cors = require("cors");
+import express from "express";
+import bodyParser from "body-parser";
+import cors from "cors";
+import morgan from "morgan";
+import connectMongoDB from "connect-mongodb-session";
+const MongoDBStore = connectMongoDB(session);
+import session from "express-session";
+import passport from "passport";
 
-const User = require("./models/user");
+import User from "./models/user";
+import { dbConnectionString } from "./config";
 
-let corsOptions = {
-    credentials: true,
-    origin: ["http://localhost:3000"],
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    preflightContinue: true
-};
-
-//==============================================================
-
-passport.serializeUser(function(user, cb) {
-    // console.log("serializeUser()");
-    cb(null, user.id);
-});
-
-passport.deserializeUser(function(id, cb) {
-    // console.log("deserializeUser()");
-    User.findById(id, (err, user) => {
-        if (err) {
-            return cb(err);
-        }
-        return cb(null, user);
-    });
-});
-
-//==============================================================
 //==============================================================
 
 let app = express();
 
 //==============================================================
 
-let dbConnectionString = "mongodb://";
-dbConnectionString +=
-    process.env.NODE_ENV === "production" ? process.env.DB_HOST : "localhost";
-if (process.env.DB_PORT) {
-    dbConnectionString += ":" + process.env.DB_PORT;
-}
-dbConnectionString += "/" + (process.env.DB_NAME || "placeholder_db");
+// App sits behind a trusted reverse proxy such as nginx
+// The proxy should insert the IP address of the client in the 'X-Forward-For' header
+app.enable("trust proxy");
 
+// Alternative method that specifies the IP address(es) of your trusted proxy
+// app.set("trust proxy", "loopback");
+
+//==============================================================
+
+// Enable CORS to skip the same-origin policy
+let corsOptions = {
+    credentials: true,
+    origin: ["http://localhost:3000", "http://roll-plays.me"],
+    preflightContinue: true
+};
+
+app.use(cors(corsOptions));
+
+//==============================================================
+
+// Set up logging
+// app.use(morgan("combined"));
+
+//==============================================================
+
+// Parse incoming request bodies and expose it on the req.body property
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+//==============================================================
+
+// Configure session options
 let sessionOptions = {
     store: new MongoDBStore({
         uri: dbConnectionString,
@@ -66,15 +65,26 @@ if (app.get("env") === "production") {
     sessionOptions.cookie.secure = true; // serve secure cookies
 }
 
+app.use(session(sessionOptions));
+
 //==============================================================
 
-app.set("trust proxy", true); //for express to trust nginx for https delivery
-app.use(cors(corsOptions));
+// Authenticate the user and enable persistent login sessions
+passport.serializeUser(function(user, cb) {
+    // console.log("serializeUser()");
+    cb(null, user.id);
+});
 
-// app.use(require('morgan')('combined'));
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(session(sessionOptions));
+passport.deserializeUser(function(id, cb) {
+    // console.log("deserializeUser()");
+    User.findById(id, (err, user) => {
+        if (err) {
+            return cb(err);
+        }
+        return cb(null, user);
+    });
+});
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -85,22 +95,17 @@ app.all("*", (req, res, next) => {
     next();
 });
 
-// app.use((req, res, next) => {
-// 	if (req.method === 'OPTIONS') {
-// 		next();
-// 	} else {
-// 		next();
-// 	}
-// });
-
 app.get("/", (req, res) => {
     res.send("hello world");
 });
 
 //==============================================================
 
-app.use("/auth", require("./api/auth.js"));
-app.use("/game", require("./api/game.js"));
+import auth from "./api/auth";
+import game from "./api/game";
+
+app.use("/auth", auth);
+app.use("/game", game);
 
 app.listen(9000, function() {
     console.log("Example app listening on port 9000!");

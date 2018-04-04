@@ -1,4 +1,4 @@
-const mongoose = require("./mongoose.js");
+import mongoose from "./mongoose";
 const Schema = mongoose.Schema;
 
 let RankSchema = new Schema({

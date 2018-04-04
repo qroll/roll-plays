@@ -1,17 +1,8 @@
-const mongoose = require("mongoose");
-mongoose.Promise = require("bluebird");
+import mongoose from "mongoose";
+import bluebird from "bluebird";
+mongoose.Promise = bluebird;
 
-let dbConnectionString = "mongodb://";
-dbConnectionString +=
-    process.env.NODE_ENV === "production" ? process.env.DB_HOST : "localhost";
-if (process.env.DB_PORT) {
-    dbConnectionString += ":" + process.env.DB_PORT;
-}
-dbConnectionString += "/" + (process.env.DB_NAME || "placeholder_db");
-
-// console.log("process.env.DB_HOST", process.env.DB_HOST);
-// console.log("process.env.DB_NAME", process.env.DB_NAME);
-// console.log("dbConnectionString", dbConnectionString);
+import { dbConnectionString } from "../config";
 
 let options = Object.assign(
     {
@@ -37,11 +28,13 @@ mongoose.connect(dbConnectionString, options);
 mongoose.connection.on("error", function(error) {
     console.log("mongoose err", error);
 });
+
 mongoose.connection.on("connected", function() {
     console.log("Connection established to MongoDB");
 });
+
 mongoose.connection.on("reconnected", function() {
     console.log("Reconnected to MongoDB");
 });
 
-module.exports = mongoose;
+export default mongoose;

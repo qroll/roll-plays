@@ -1,8 +1,7 @@
-const express = require("express");
-
+import express from "express";
 const router = express.Router();
 
-const Rank = require("../models/rank");
+import Rank from "./models/rank";
 
 router.get("/", (req, res) => {
     Rank.find()

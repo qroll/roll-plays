@@ -1,16 +1,6 @@
-const bcrypt = require("bcrypt");
-
-const mongoose = require("./mongoose.js");
+import bcrypt from "bcrypt";
+import mongoose from "./mongoose";
 const Schema = mongoose.Schema;
-
-let UserAccountsSchema = new Schema(
-    {},
-    {
-        timestamps: true,
-        strict: false
-    }
-);
-// UserAccounts = mongoose.model('UserAccounts', UserAccountsSchema)
 
 let UserSchema = new Schema(
     {
@@ -19,7 +9,6 @@ let UserSchema = new Schema(
             type: String,
             required: true
         }
-        // accounts: [UserAccountsSchema]
     },
     {
         timestamps: true,
@@ -27,7 +16,8 @@ let UserSchema = new Schema(
     }
 );
 
-const saltRounds = 10;
+const SALT_WORK_FACTOR = 10;
+
 UserSchema.pre("save", function(next) {
     let user = this;
     // only hash the password if it has been modified (or is new)
@@ -35,7 +25,7 @@ UserSchema.pre("save", function(next) {
         return next();
     }
 
-    bcrypt.hash(user.password, saltRounds, function(err, hash) {
+    bcrypt.hash(user.password, SALT_WORK_FACTOR, function(err, hash) {
         if (err) {
             return next(err);
         }
@@ -47,13 +37,16 @@ UserSchema.pre("save", function(next) {
 });
 
 UserSchema.methods.comparePassword = function(candidatePassword, cb) {
-    // console.log("UserSchema.methods.comparePassword");
-    // console.log(this);
-    bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
-        if (err) return cb(err);
+    let user = this;
+    bcrypt.compare(candidatePassword, user.password, function(err, isMatch) {
+        if (err) {
+            return cb(err);
+        }
+
         cb(null, isMatch);
     });
 };
 
 const User = mongoose.model("User", UserSchema);
-module.exports = User;
+
+export default User;
