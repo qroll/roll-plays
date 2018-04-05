@@ -6,6 +6,7 @@ import Layout from "./Layout";
 import Sample from "./Sample";
 import Ranking from "./Ranking";
 import AddGame from "./AddGame";
+import Feed from "./Feed";
 
 import "./App.css";
 
@@ -20,6 +21,7 @@ class App extends Component {
                         <Route path="/sample" component={Sample} />
                         <Route path="/rank" component={AddGame} />
                         <Route path="/rank" component={Ranking} />
+                        <Route path="/feed" component={Feed} />
                     </div>
                 </Layout>
             </Provider>

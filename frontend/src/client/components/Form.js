@@ -131,32 +131,63 @@ export const Button = styled.button`
     }
 `;
 
-export const AutocompleteInput = props => (
-    <Autocomplete
-        renderItem={(item, isHighlighted) => (
-            <div
-                key={item.id}
-                style={{
-                    backgroundColor: isHighlighted ? "#e0e0e0" : "#ffffff",
-                    padding: "3px",
-                    fontSize: "1em"
-                }}
-            >
-                {item.label}
-            </div>
-        )}
-        renderInput={props => {
-            const { ref, ...rest } = props;
-            return <TextInput {...rest} innerRef={ref} />;
-        }}
-        wrapperStyle={{
-            flex: "1 auto"
-        }}
-        menuStyle={{
-            border: "1px solid #ebebeb",
-            minWidth: "unset",
-            zIndex: 1
-        }}
-        {...props}
-    />
-);
+export const Select = props => {
+    let { items, value, creatable, name } = props;
+    let selectedItem = items.find(item => item.value === value);
+    let displayLabel = selectedItem
+        ? selectedItem.label
+        : creatable ? value : "";
+
+    return (
+        <Autocomplete
+            getItemValue={item => item.label}
+            renderItem={(item, isHighlighted) => (
+                <div
+                    key={item.value}
+                    style={{
+                        backgroundColor: isHighlighted ? "#e0e0e0" : "#ffffff",
+                        padding: "3px",
+                        fontSize: "1em"
+                    }}
+                >
+                    {item.label}
+                </div>
+            )}
+            renderInput={props => {
+                const { ref, onChange, ...rest } = props;
+                return creatable ? (
+                    <TextInput
+                        {...rest}
+                        name={name}
+                        innerRef={ref}
+                        value={displayLabel}
+                        onChange={onChange}
+                    />
+                ) : (
+                    <TextInput
+                        {...rest}
+                        innerRef={ref}
+                        value={displayLabel}
+                        readOnly
+                    />
+                );
+            }}
+            wrapperStyle={{
+                flex: "1 auto"
+            }}
+            menuStyle={{
+                border: "1px solid #ebebeb",
+                minWidth: "unset",
+                zIndex: 1
+            }}
+            {...props}
+        />
+    );
+};
+
+export const Error = styled.div`
+    background-color: rgba(206, 17, 38, 0.05);
+    border-radius: 5px;
+    font-size: 0.75em;
+    padding: 5px;
+`;
