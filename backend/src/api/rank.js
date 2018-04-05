@@ -1,12 +1,12 @@
 import express from "express";
 const router = express.Router();
 
-import Rank from "./models/rank";
+import Rank from "../models/rank";
 
 router.get("/", (req, res) => {
     Rank.find()
-        .then(data => {
-            res.json(data);
+        .then(ranks => {
+            res.json({ ranks });
         })
         .catch(err => {
             console.log(err);
@@ -41,4 +41,4 @@ router.put("/:id", (req, res) => {
         });
 });
 
-module.exports = router;
+export default router;

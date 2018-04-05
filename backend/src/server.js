@@ -1,4 +1,5 @@
 import "./config";
+import "./seed";
 
 import express from "express";
 import bodyParser from "body-parser";
@@ -103,9 +104,11 @@ app.get("/", (req, res) => {
 
 import auth from "./api/auth";
 import game from "./api/game";
+import rank from "./api/rank";
 
 app.use("/auth", auth);
 app.use("/game", game);
+app.use("/rank", rank);
 
 app.listen(9000, function() {
     console.log("Example app listening on port 9000!");

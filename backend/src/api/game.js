@@ -5,8 +5,8 @@ import Game from "../models/game";
 
 router.get("/", (req, res) => {
     Game.find()
-        .then(data => {
-            res.json(data);
+        .then(games => {
+            res.json({ games });
         })
         .catch(err => {
             console.log(err);
