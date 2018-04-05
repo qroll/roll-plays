@@ -4,24 +4,12 @@ mongoose.Promise = bluebird;
 
 import { dbConnectionString } from "../config";
 
-let options = Object.assign(
-    {
-        server: {
-            poolSize: 5,
-            auto_reconnect: true,
-            reconnectTries: 3,
-            socketOptions: {
-                keepAlive: 100,
-                connectTimeoutMS: 5000,
-                socketTimeoutMS: 30000
-            }
-        }
-    },
-    {
-        // user: process.env.DB_USER,
-        // pass: process.env.DB_PASSWORD
-    }
-);
+let options = {
+    keepAlive: 100,
+    connectTimeoutMS: 30000,
+    socketTimeoutMS: 30000,
+    reconnectTries: 3
+};
 
 mongoose.connect(dbConnectionString, options);
 
