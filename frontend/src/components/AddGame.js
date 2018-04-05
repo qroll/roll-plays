@@ -26,10 +26,7 @@ const defaultFormFields = {
     title: "",
     releaseDate: "",
     inLibrary: false,
-    purchasePrice: "",
-    inBundle: "",
-    status: "",
-    rating: ""
+    status: ""
 };
 
 class AddGame extends React.Component {
@@ -148,29 +145,6 @@ class AddGame extends React.Component {
                         <Label>In library</Label>
                     </Toggle>
                 </FormControl>
-                {this.state.inLibrary && (
-                    <FormControl>
-                        <Label>Purchase price</Label>
-                        <TextInput
-                            type="text"
-                            name="purchasePrice"
-                            value={this.state.form.purchasePrice}
-                            onChange={this.handleInputChange}
-                            readOnly={this.state.submitting}
-                        />
-                    </FormControl>
-                )}
-                <FormControl>
-                    <Toggle>
-                        <Checkbox
-                            type="checkbox"
-                            name="inBundle"
-                            checked={this.state.form.inBundle}
-                            onChange={this.handleInputChange}
-                        />
-                        <Label>In bundle</Label>
-                    </Toggle>
-                </FormControl>
                 <FormControl>
                     <Label>Status</Label>
                     <Select
@@ -183,16 +157,6 @@ class AddGame extends React.Component {
                         value={this.state.form.status}
                         onChange={this.handleInputChange}
                         onSelect={this.handleOnStatusChange}
-                    />
-                </FormControl>
-                <FormControl>
-                    <Label>Rating</Label>
-                    <TextInput
-                        type="text"
-                        name="rating"
-                        value={this.state.form.rating}
-                        onChange={this.handleInputChange}
-                        readOnly={this.state.submitting}
                     />
                 </FormControl>
                 {this.state.submitting ? (

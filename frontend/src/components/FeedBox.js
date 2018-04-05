@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import { Editor, EditorState, RichUtils } from "draft-js";
+import { Editor, EditorState } from "draft-js";
 
-import { TextInput, Button } from "./Form";
+import { Button } from "./Form";
 
 import "draft-js/dist/Draft.css";
 

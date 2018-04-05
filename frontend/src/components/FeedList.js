@@ -1,13 +1,12 @@
 import React from "react";
-import moment from "moment";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import markdown from "markdown-it";
 
+import Icon from "./Icon";
+
 import { getContrastColor } from "../util/color";
 import { displayTime } from "../util/time";
-
-import icons from "./icons.svg";
 
 const md = markdown();
 
@@ -62,17 +61,6 @@ const StyledFeedList = styled.div`
     margin: 10px;
 `;
 
-const StyledSVG = styled.svg`
-    fill: #333;
-    height: 20px;
-    width: 20px;
-    margin-right: 4px;
-
-    &:hover {
-        fill: #e0e0e0;
-    }
-`;
-
 const Tag = styled.span`
     background-color: ${props => props.color || "#33516E"};
     border-radius: 3px;
@@ -89,12 +77,6 @@ const Tag = styled.span`
     }
 `;
 
-const SVGIcon = ({ name }) => (
-    <StyledSVG>
-        <use xlinkHref={`${icons}#${name}`} />
-    </StyledSVG>
-);
-
 const PostTags = ({ game, tags = [] }) => {
     return (
         <div style={{ paddingBottom: "10px" }}>
@@ -109,8 +91,8 @@ const Post = ({ post }) => (
         <PostBody dangerouslySetInnerHTML={{ __html: md.render(post.body) }} />
         <PostTags game={post.game} tags={post.tags} />
         <PostFooter>
-            <SVGIcon name="icon-message" />
-            <SVGIcon name="icon-pencil" />
+            <Icon name="icon-message" />
+            <Icon name="icon-pencil" />
             <Link to="/">
                 <PostDate>{displayTime(post.date)}</PostDate>
             </Link>

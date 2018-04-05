@@ -8,10 +8,12 @@ let instance = axios.create({
     withCredentials: true
 });
 
-export const callApi = (endpoint, method = "post", body) => {
+export const callApi = (endpoint, method = "get", body) => {
     switch (method) {
         case "post":
             return instance.post(endpoint, body);
+        case "put":
+            return instance.put(endpoint, body);
         case "delete":
             return instance.delete(endpoint);
         default:

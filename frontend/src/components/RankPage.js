@@ -1,6 +1,6 @@
 import React from "react";
 
-import { UserSession, GuestSession } from "./Session";
+import { UserSession } from "./Session";
 import AddRank from "./AddRank";
 import Ranking from "./Ranking";
 

@@ -14,36 +14,28 @@ export const checkUserSession = () => dispatch => {
             }
         })
         .catch(err => {
-            console.log(err);
             dispatch({ type: "LOGOUT_USER" });
+            return err;
         });
 };
 
 export const login = (username, password) => {
     return dispatch =>
-        callApi("/login", "post", { username, password })
-            .then(res => {
-                console.log(res.data);
-                dispatch({
-                    type: "LOGIN_USER"
-                });
-            })
-            .catch(err => {
-                console.log(err);
+        callApi("/auth/login", "post", { username, password }).then(res => {
+            console.log(res.data);
+            dispatch({
+                type: "LOGIN_USER"
             });
+        });
 };
 
 export const logout = () => {
     return dispatch => {
-        callApi("/logout", "post")
-            .then(res => {
-                console.log(res.data);
-                dispatch({
-                    type: "LOGOUT_USER"
-                });
-            })
-            .catch(err => {
-                console.log(err);
+        callApi("/auth/logout").then(res => {
+            console.log(res.data);
+            dispatch({
+                type: "LOGOUT_USER"
             });
+        });
     };
 };

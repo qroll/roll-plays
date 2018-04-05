@@ -2,13 +2,14 @@ import React, { Component } from "react";
 import { Provider } from "react-redux";
 import { Route } from "react-router-dom";
 import configureStore from "../store";
+
 import Layout from "./Layout";
-import Sample from "./Sample";
-import Ranking from "./Ranking";
 import AddGame from "./AddGame";
 import Feed from "./Feed";
+import Login from "./Login";
+import RankPage from "./RankPage";
 
-import "./App.css";
+import { SessionChecker } from "./Session";
 
 let store = configureStore();
 
@@ -16,14 +17,14 @@ class App extends Component {
     render() {
         return (
             <Provider store={store}>
-                <Layout>
-                    <div className="App">
-                        <Route path="/sample" component={Sample} />
-                        <Route path="/rank" component={AddGame} />
-                        <Route path="/rank" component={Ranking} />
+                <SessionChecker>
+                    <Layout>
                         <Route path="/feed" component={Feed} />
-                    </div>
-                </Layout>
+                        <Route path="/game" component={AddGame} />
+                        <Route path="/login" component={Login} />
+                        <Route path="/rank" component={RankPage} />
+                    </Layout>
+                </SessionChecker>
             </Provider>
         );
     }

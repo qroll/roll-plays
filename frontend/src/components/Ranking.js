@@ -2,28 +2,9 @@ import React from "react";
 import styled from "styled-components";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
-const dummyRank = {
-    "1a": {
-        id: "1a",
-        name: "Great",
-        description:
-            "Fantastic gameplay or narrative elements that left a deep impression",
-        games: ["39whd", "1dhjk", "aoyd8"]
-    },
-    "2b": {
-        id: "2b",
-        name: "Entertaining",
-        description: "Solid mechanics, time well spent",
-        games: ["91rnc"]
-    }
-};
+import RankingInfo from "./RankingInfo";
 
-const dummyGames = {
-    "39whd": { id: "39whd", title: "Portal" },
-    "1dhjk": { id: "1dhjk", title: "The Witness" },
-    aoyd8: { id: "aoyd8", title: "Prey (2017)" },
-    "91rnc": { id: "91rnc", title: "Gunpoint" }
-};
+import { callApi } from "../util/callApi";
 
 const remove = (list, index) => [
     ...list.slice(0, index),
@@ -69,8 +50,8 @@ const ItemTitle = styled.div`
     vertical-align: middle;
 `;
 
-const DraggableRankItem = ({ rank, game }) => (
-    <Draggable draggableId={game.id}>
+const DraggableRankItem = ({ rank, game = {} }) => (
+    <Draggable draggableId={game._id}>
         {provided => (
             <div
                 ref={provided.innerRef}
@@ -87,25 +68,10 @@ const DraggableRankItem = ({ rank, game }) => (
     </Draggable>
 );
 
-const RankingName = styled.h1`
-    font-family: "Roboto Condensed";
-    font-size: 1.2em;
-    font-weight: normal;
-    margin: 0 0 5px 0;
-    text-transform: uppercase;
-`;
-
-const RankingDescription = styled.p`
-    font-size: 0.8em;
-    font-style: oblique;
-    margin: 5px 0;
-`;
-
 const RankingList = ({ ranking, games, onDragEnd }) => (
     <div>
-        <RankingName>{ranking.name}</RankingName>
-        <RankingDescription>{ranking.description}</RankingDescription>
-        <Droppable droppableId={ranking.id}>
+        <RankingInfo name={ranking.name} description={ranking.description} />
+        <Droppable droppableId={ranking._id}>
             {provided => (
                 <div ref={provided.innerRef}>
                     {ranking.games.map((gameId, index) => (
@@ -123,57 +89,72 @@ const RankingList = ({ ranking, games, onDragEnd }) => (
 );
 
 class Ranking extends React.Component {
-    state = { rankedGames: dummyRank, games: dummyGames };
+    state = { rankedGames: {}, games: {} };
+
+    componentDidMount() {
+        callApi("/rank").then(res => {
+            let { data } = res;
+            let rankedGames = {};
+            data.ranks.forEach(rank => (rankedGames[rank._id] = rank));
+            this.setState({ rankedGames });
+        });
+        callApi("/game").then(res => {
+            let { data } = res;
+            let games = {};
+            data.games.forEach(game => (games[game._id] = game));
+            this.setState({ games });
+        });
+    }
 
     onDragEnd = result => {
         if (!result.destination) {
             return;
         }
 
-        console.log(result);
+        const {
+            source: { droppableId: srcId },
+            destination: { droppableId: dstId },
+            source,
+            destination
+        } = result;
 
-        if (result.source.droppableId === result.destination.droppableId) {
+        if (srcId === dstId) {
             let games = reorder(
-                this.state.rankedGames[result.source.droppableId].games,
-                result.source.index,
-                result.destination.index
+                this.state.rankedGames[srcId].games,
+                source.index,
+                destination.index
             );
 
             this.setState({
                 rankedGames: {
                     ...this.state.rankedGames,
-                    [result.source.droppableId]: {
-                        ...this.state.rankedGames[result.source.droppableId],
+                    [srcId]: {
+                        ...this.state.rankedGames[srcId],
                         games
                     }
                 }
             });
         } else {
-            console.log(
-                result.source.droppableId,
-                result.destination.droppableId
+            let dstGames = insert(
+                this.state.rankedGames[dstId].games,
+                destination.index,
+                this.state.rankedGames[srcId].games[source.index]
             );
             let srcGames = remove(
-                this.state.rankedGames[result.source.droppableId],
-                result.source.index
-            );
-            let dstGames = insert(
-                this.state.rankedGames[result.destination.droppableId],
-                result.destination.index
+                this.state.rankedGames[srcId].games,
+                source.index
             );
 
             this.setState({
                 rankedGames: {
                     ...this.state.rankedGames,
-                    [result.source.droppableId]: {
-                        ...this.state.rankedGames[result.source.droppableId],
-                        srcGames
+                    [srcId]: {
+                        ...this.state.rankedGames[srcId],
+                        games: srcGames
                     },
-                    [result.destination.droppableId]: {
-                        ...this.state.rankedGames[
-                            result.destination.droppableId
-                        ],
-                        dstGames
+                    [dstId]: {
+                        ...this.state.rankedGames[dstId],
+                        games: dstGames
                     }
                 }
             });
