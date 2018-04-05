@@ -100,6 +100,7 @@ app.get("/", (req, res) => {
 //==============================================================
 
 app.use("/auth", require("./api/auth.js"));
+app.use("/game", require("./api/game.js"));
 
 app.listen(9000, function() {
     console.log("Example app listening on port 9000!");
