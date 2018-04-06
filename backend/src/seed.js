@@ -2,16 +2,14 @@ import User from "./models/user";
 import Game from "./models/game";
 import Rank from "./models/rank";
 
-User.find({})
+User.find()
     .exec()
     .then(users => {
         if (users && users.length === 0) {
-            console.log("there are no users in database");
-            console.log("proceed to seed database with default user");
+            console.log("seeding database with default user");
             return User.create({
                 username: "superuser",
-                password: "superuser",
-                roles: ["superuser"]
+                password: "superuser"
             }).then(user => {
                 console.log("default user created");
             });
@@ -25,8 +23,7 @@ Game.find()
     .exec()
     .then(games => {
         if (games && games.length === 0) {
-            console.log("there are no games in database");
-            console.log("proceed to seed database with default games");
+            console.log("seeding database with default games");
             return Game.create([
                 { title: "Portal", inLibrary: true, status: "completed" },
                 { title: "The Witness", inLibrary: true, status: "completed" },
@@ -36,19 +33,22 @@ Game.find()
         }
     })
     .then(games => {
-        Rank.create([
-            {
-                name: "Great",
-                description:
-                    "Fantastic gameplay or narrative elements that left a deep impression",
-                games: [games[0]._id, games[1]._id, games[2]._id]
-            },
-            {
-                name: "Entertaining",
-                description: "Solid mechanics, time well spent",
-                games: [games[3]._id]
-            }
-        ]);
+        if (games && games.length > 0) {
+            console.log("seeding database with default ranks");
+            Rank.create([
+                {
+                    name: "Great",
+                    description:
+                        "Fantastic gameplay or narrative elements that left a deep impression",
+                    games: [games[0]._id, games[1]._id, games[2]._id]
+                },
+                {
+                    name: "Entertaining",
+                    description: "Solid mechanics, time well spent",
+                    games: [games[3]._id]
+                }
+            ]);
+        }
     })
     .catch(err => {
         console.log(err);

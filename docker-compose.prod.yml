@@ -1,0 +1,23 @@
+version: '3'
+services:
+  mongodb:
+    restart: always
+  backend:
+    restart: always
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+  frontend:
+    restart: always
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "80:80"

@@ -5,4 +5,4 @@ RUN npm install --quiet
 COPY . .
 EXPOSE 9000
 RUN npm install bcrypt
-CMD [ "npm", "run", "dev" ]
+CMD [ "npm", "start" ]

@@ -31,7 +31,7 @@ app.enable("trust proxy");
 // Enable CORS to skip the same-origin policy
 let corsOptions = {
     credentials: true,
-    origin: ["http://localhost:3000", "http://roll-plays.me"],
+    origin: ["http://localhost:3000", "http://rollplays.me"],
     preflightContinue: true
 };
 
