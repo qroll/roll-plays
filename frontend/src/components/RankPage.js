@@ -7,7 +7,7 @@ import Ranking from "./Ranking";
 class RankPage extends React.Component {
     render() {
         return (
-            <div>
+            <div style={{ margin: "10px" }}>
                 <UserSession>
                     <AddRank />
                 </UserSession>

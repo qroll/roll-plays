@@ -9,6 +9,7 @@ class GuestLayout extends React.Component {
                 <StyledLink to="/rank">Ranks</StyledLink>
                 <StyledLink to="/game">Games</StyledLink>
                 <StyledLink to="/feed">Feed</StyledLink>
+                <StyledLink to="/login">Login</StyledLink>
             </NavBar>
         );
     }

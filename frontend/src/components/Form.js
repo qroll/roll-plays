@@ -31,6 +31,7 @@ export const Label = styled.span`
 `;
 
 export const TextInput = styled.input`
+    background: none;
     border: none;
     border-bottom: 1px solid #e0e0e0;
     box-sizing: border-box;
@@ -39,7 +40,7 @@ export const TextInput = styled.input`
     outline: none;
     width: 100%;
 
-    &:placeholder {
+    &::placeholder {
         color: #e0e0e0;
     }
 
@@ -98,7 +99,7 @@ export const Toggle = styled.div`
         }
     }
 
-    >  ${Checkbox}:checked + ${Label} {
+    > ${Checkbox}:checked + ${Label} {
         &:after {
             background-color: #f07241;
         }
@@ -123,7 +124,7 @@ export const Button = styled.button`
     color: #333333;
     flex: 0 0 auto;
     outline: none;
-    padding: 5px;
+    padding: 5px 10px;
     width: fit-content;
 
     &:hover {

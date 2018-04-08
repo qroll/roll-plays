@@ -1,10 +1,79 @@
 import React from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import styled from "styled-components";
 
-import { FormControl, Label, TextInput, Button, Error } from "./Form";
+import { Button } from "./Form";
 
 import * as actions from "../actions/user";
+
+import bg from "./8370546654_cfced9bba0_o.jpg";
+
+const Background = styled.img`
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: -1;
+    object-fit: cover;
+`;
+
+const LoginPage = styled.div`
+    display: flex;
+    flex: 1;
+`;
+
+const LoginBox = styled.div`
+    background-color: rgb(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: auto;
+    width: fit-content;
+`;
+
+const LoginInput = styled.input`
+    background-color: rgb(0, 0, 0, 0.1);
+    border: none;
+    border-radius: 3px;
+    box-sizing: border-box;
+    color: #fff;
+    flex: 1 auto;
+    margin: 20px 20px 0 20px;
+    padding: 10px;
+    outline: none;
+    width: 300px;
+
+    &::placeholder {
+        color: #efefef;
+    }
+`;
+
+const LoginButton = Button.extend`
+    border-radius: 3px;
+    font-size: 0.9em;
+    margin: 20px;
+    padding: 10px;
+    width: 300px;
+`;
+
+const Error = styled.div`
+    background-color: rgba(206, 17, 38, 0.5);
+    color: #efefef;
+    font-size: 0.75em;
+    padding: 5px;
+`;
+
+const Attribution = styled.a`
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    color: #333333;
+    font-size: 0.8em;
+    padding: 5px;
+    text-decoration: none;
+`;
 
 const defaultFormFields = {
     username: "",
@@ -50,34 +119,38 @@ class Login extends React.Component {
 
     render() {
         return (
-            <div>
-                {this.state.error && <Error>{this.state.error}</Error>}
-                <FormControl>
-                    <Label>Username</Label>
-                    <TextInput
+            <LoginPage>
+                <LoginBox>
+                    {this.state.error && <Error>{this.state.error}</Error>}
+                    <LoginInput
                         type="text"
                         name="username"
+                        placeholder="Username"
                         value={this.state.form.username}
                         onChange={this.handleInputChange}
                         readOnly={this.state.submitting}
                     />
-                </FormControl>
-                <FormControl>
-                    <Label>Password</Label>
-                    <TextInput
+                    <LoginInput
                         type="text"
                         name="password"
+                        placeholder="Password"
                         value={this.state.form.password}
                         onChange={this.handleInputChange}
                         readOnly={this.state.submitting}
                     />
-                </FormControl>
-                {this.state.submitting ? (
-                    <Button disabled>Logging in...</Button>
-                ) : (
-                    <Button onClick={this.handleOnSubmit}>Login</Button>
-                )}
-            </div>
+                    {this.state.submitting ? (
+                        <LoginButton disabled>Logging in...</LoginButton>
+                    ) : (
+                        <LoginButton onClick={this.handleOnSubmit}>
+                            Login
+                        </LoginButton>
+                    )}
+                </LoginBox>
+                <Background src={bg} />
+                <Attribution href="https://www.flickr.com/photos/87896671@N04/8370546654/">
+                    Stuart Williams
+                </Attribution>
+            </LoginPage>
         );
     }
 }
