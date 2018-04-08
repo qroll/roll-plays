@@ -176,11 +176,6 @@ export const Select = props => {
             wrapperStyle={{
                 flex: "1 auto"
             }}
-            menuStyle={{
-                border: "1px solid #ebebeb",
-                minWidth: "unset",
-                zIndex: 1
-            }}
             {...props}
         />
     );

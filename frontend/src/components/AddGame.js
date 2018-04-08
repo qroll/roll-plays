@@ -15,9 +15,9 @@ import {
 import { callApi } from "../util/callApi";
 
 const AddGameBox = styled.div`
+    background-color: #fff;
     display: flex;
     flex-direction: column;
-    margin: 10px;
     padding: 20px;
 `;
 

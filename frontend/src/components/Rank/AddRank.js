@@ -1,9 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 
-import { FormControl, Label, TextInput, Button, Error } from "./Form";
+import { FormControl, Label, TextInput, Button, Error } from "../Form";
 
-import { callApi } from "../util/callApi";
+import { callApi } from "../../util/callApi";
 
 const AddRankBox = styled.div`
     display: flex;
