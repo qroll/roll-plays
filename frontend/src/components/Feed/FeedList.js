@@ -3,28 +3,21 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import markdown from "markdown-it";
 
-import Icon from "./Icon";
-
-import { getContrastColor } from "../util/color";
-import { displayTime } from "../util/time";
+import { getContrastColor } from "../../util/color";
+import { displayTime } from "../../util/time";
 
 const md = markdown();
 
-const ThreadBox = styled.div`
-    &:hover {
-        background-color: #ebebeb;
-    }
+const PostBox = styled.div`
+    background-color: #fff;
+    padding: 15px;
 
     &:not(:last-of-type) {
         border-bottom: 1px solid #e0e0e0;
     }
-`;
 
-const PostBox = styled.div`
-    padding: 10px;
-
-    &:not(:last-of-type) {
-        border-bottom: 1px solid #fff;
+    &:hover {
+        background-color: #fafafa;
     }
 `;
 
@@ -57,7 +50,6 @@ const PostDate = styled.div`
 
 const StyledFeedList = styled.div`
     border: 1px solid #e0e0e0;
-    border-radius: 5px;
     margin: 10px;
 `;
 
@@ -69,12 +61,6 @@ const Tag = styled.span`
     font-size: 0.75em;
     margin-right: 5px;
     padding: 3px 5px;
-
-    &:hover {
-        background-color: ${props => props.color || "#33516E"};
-        color: #ffffff;
-        font-weight: bold;
-    }
 `;
 
 const PostTags = ({ game, tags = [] }) => {
@@ -91,8 +77,6 @@ const Post = ({ post }) => (
         <PostBody dangerouslySetInnerHTML={{ __html: md.render(post.body) }} />
         <PostTags game={post.game} tags={post.tags} />
         <PostFooter>
-            <Icon name="icon-message" />
-            <Icon name="icon-pencil" />
             <Link to="/">
                 <PostDate>{displayTime(post.date)}</PostDate>
             </Link>
@@ -100,23 +84,9 @@ const Post = ({ post }) => (
     </PostBox>
 );
 
-const Thread = ({ thread, posts }) => (
-    <ThreadBox>
-        {thread.length === 1 ? <Post post={posts[thread[0]]} /> : null}
-        {thread.length > 1 && thread.length < 3
-            ? thread.map(postId => <Post key={postId} post={posts[postId]} />)
-            : null}
-        {thread.length >= 3
-            ? thread.map(postId => <Post key={postId} post={posts[postId]} />)
-            : null}
-    </ThreadBox>
-);
-
-const FeedList = ({ threads, posts }) => (
+const FeedList = ({ posts }) => (
     <StyledFeedList>
-        {threads.map((thread, index) => (
-            <Thread key={index} thread={thread} posts={posts} />
-        ))}
+        {posts.map(post => <Post key={post._id} post={post} />)}
     </StyledFeedList>
 );
 

@@ -6,6 +6,7 @@ export const NavBar = styled.nav`
     border: 1px solid #ebebeb;
     border-bottom: 3px solid #ebebeb;
     display: flex;
+    flex: 0 0 auto;
 
     @media (min-width: 768px) {
         margin: 10px auto;
