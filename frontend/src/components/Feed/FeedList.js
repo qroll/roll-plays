@@ -11,6 +11,7 @@ const md = markdown();
 const PostBox = styled.div`
     background-color: #fff;
     padding: 15px;
+    overflow-wrap: break-word;
 
     &:not(:last-of-type) {
         border-bottom: 1px solid #e0e0e0;

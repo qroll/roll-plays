@@ -7,9 +7,12 @@ import { TextLink } from "../Common";
 import * as actions from "../../actions/user";
 
 const StyledLink = TextLink.extend`
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    color: #fff;
     font-family: "Roboto Condensed";
     margin: 10px;
-    padding: 10px;
+    padding: 10px 15px;
     position: absolute;
     right: 0;
     top: 0;

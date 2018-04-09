@@ -7,7 +7,7 @@ import Ranking from "./Ranking";
 
 const RankPage = styled.div`
     flex: 1;
-    margin: auto;
+    margin: 10px auto;
     max-width: 500px;
 `;
 

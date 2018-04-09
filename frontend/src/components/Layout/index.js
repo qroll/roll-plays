@@ -18,16 +18,13 @@ const Background = styled.img`
     position: fixed;
     top: 0;
     left: 0;
-    height: 100%;
+    height: 120vh;
     width: 100%;
     z-index: -1;
     object-fit: cover;
 `;
 
 const Attribution = ALink.extend`
-    position: fixed;
-    bottom: 0;
-    right: 0;
     color: #333333;
     font-size: 0.8em;
     padding: 5px;
