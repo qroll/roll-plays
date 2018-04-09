@@ -5,8 +5,7 @@ if (!process.env.NODE_ENV) {
 }
 
 let dbConnectionString = "mongodb://";
-dbConnectionString +=
-    process.env.NODE_ENV === "production" ? process.env.DB_HOST : "localhost";
+dbConnectionString += process.env.DB_HOST || "localhost";
 if (process.env.DB_PORT) {
     dbConnectionString += ":" + process.env.DB_PORT;
 }

@@ -35,6 +35,10 @@ let corsOptions = {
     preflightContinue: true
 };
 
+if (process.env.NODE_ENV === "development") {
+    corsOptions.origin = true;
+}
+
 app.use(cors(corsOptions));
 
 //==============================================================

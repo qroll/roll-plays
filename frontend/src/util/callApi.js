@@ -1,6 +1,8 @@
 import axios from "axios";
 
-let API_URL = "http://localhost:9000";
+let API_URL = "http://";
+API_URL += window.location.hostname || "localhost";
+API_URL += ":9000";
 
 let instance = axios.create({
     baseURL: process.env.REACT_APP_API_URL || API_URL,
