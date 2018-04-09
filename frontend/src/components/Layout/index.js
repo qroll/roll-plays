@@ -2,12 +2,17 @@ import React from "react";
 import styled from "styled-components";
 
 import { GuestOrUserSession } from "../Session";
-import GuestLayout from "./GuestLayout";
-import UserLayout from "./UserLayout";
+import { ALink } from "../Common";
+import GuestNavBar from "./GuestNavBar";
+import UserNavBar from "./UserNavBar";
+import Logout from "./Logout";
+import Login from "./Login";
 
 import "./Layout.css";
 
-import bg from "./8370546654_cfced9bba0_o.jpg";
+import large from "./paintshot-2764w-min.jpg";
+import med from "./paintshot-2048w-min.jpg";
+import small from "./paintshot-640w-min.jpg";
 
 const Background = styled.img`
     position: fixed;
@@ -19,14 +24,13 @@ const Background = styled.img`
     object-fit: cover;
 `;
 
-const Attribution = styled.a`
+const Attribution = ALink.extend`
     position: fixed;
     bottom: 0;
     right: 0;
     color: #333333;
     font-size: 0.8em;
     padding: 5px;
-    text-decoration: none;
 `;
 
 class Layout extends React.Component {
@@ -34,11 +38,18 @@ class Layout extends React.Component {
         return (
             <div className="App">
                 <GuestOrUserSession
-                    guestComponent={<GuestLayout />}
-                    userComponent={<UserLayout />}
+                    guestComponent={<GuestNavBar />}
+                    userComponent={<UserNavBar />}
+                />
+                <GuestOrUserSession
+                    guestComponent={<Login />}
+                    userComponent={<Logout />}
                 />
                 {this.props.children}
-                <Background src={bg} />
+                <Background
+                    src={large}
+                    srcset={`${small} 640w, ${med} 2048w, ${large} 2768w`}
+                />
                 <Attribution href="https://www.flickr.com/photos/87896671@N04/8370546654/">
                     Stuart Williams
                 </Attribution>

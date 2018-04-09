@@ -2,11 +2,11 @@ import React from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 
-import { NavBar, StyledLink, StyledNavText } from "./NavBar";
+import { NavBar, StyledLink } from "./NavBar";
 
 import * as actions from "../../actions/user";
 
-class UserLayout extends React.Component {
+class UserNavBar extends React.Component {
     render() {
         return (
             <NavBar>
@@ -14,9 +14,6 @@ class UserLayout extends React.Component {
                 <StyledLink to="/rank">Ranks</StyledLink>
                 <StyledLink to="/game">Games</StyledLink>
                 <StyledLink to="/feed">Feed</StyledLink>
-                <StyledNavText onClick={() => this.props.actions.logout()}>
-                    Logout
-                </StyledNavText>
             </NavBar>
         );
     }
@@ -26,6 +23,6 @@ const mapDispatchToProps = dispatch => ({
     actions: bindActionCreators(actions, dispatch)
 });
 
-const UserLayoutContainer = connect(null, mapDispatchToProps)(UserLayout);
+const UserNavBarContainer = connect(null, mapDispatchToProps)(UserNavBar);
 
-export default UserLayoutContainer;
+export default UserNavBarContainer;

@@ -13,9 +13,7 @@ const dummyPosts = [
             "rosebud;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!",
         edited: false,
         date: moment(),
-        parent: "2b",
-        prev: "2b",
-        next: "4d"
+        tags: ["this was an important post"]
     },
     {
         _id: "4d",
@@ -23,10 +21,15 @@ const dummyPosts = [
         body:
             "With ghosts, pools, apartments, toddlers and pets back, only Seasons is left as a franchise staple. Hopefully Maxis can explore new themes once it's done. (I'm not holding my breath)",
         edited: false,
-        date: moment(),
-        parent: "2b",
-        prev: "3c",
-        tags: ["DLC"]
+        date: moment()
+    },
+    {
+        _id: "1337",
+        game: "Prey",
+        body: "hi yes Prey is the true 2017 GOTY",
+        edited: false,
+        date: "2017-08-03",
+        tags: ["fight me", "and my army of mimics"]
     },
     {
         _id: "2b",
@@ -34,8 +37,7 @@ const dummyPosts = [
         body:
             "The Sims 4 is a major disappointment, but at least we still have The Sims 2 to return to~",
         edited: true,
-        date: "2016-08-03",
-        next: "3c"
+        date: "2016-08-03"
     },
     {
         _id: "1a",
@@ -44,6 +46,13 @@ const dummyPosts = [
             "A restaurant sim that's really a cross between Typing of the Dead and Cake Mania. It's way more fun than it has any right to be.",
         edited: false,
         date: "2016-01-03"
+    },
+    {
+        _id: "M1rror53d6e",
+        game: "Mirror's Edge",
+        body: "this game is #aesthetic goals",
+        edited: false,
+        date: "2015-01-01"
     }
 ];
 

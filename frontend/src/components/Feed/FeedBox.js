@@ -4,6 +4,8 @@ import { Editor, EditorState } from "draft-js";
 
 import { Button } from "../Form";
 
+import decorator from "./decorators";
+
 import "draft-js/dist/Draft.css";
 
 const TextBox = styled.div`
@@ -27,7 +29,7 @@ const PostButton = Button.extend`
 
 class RichEditor extends React.Component {
     state = {
-        editorState: EditorState.createEmpty()
+        editorState: EditorState.createEmpty(decorator)
     };
 
     onChange = editorState => {
