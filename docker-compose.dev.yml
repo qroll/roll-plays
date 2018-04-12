@@ -5,14 +5,7 @@ services:
     build: ./backend/
     environment:
       - NODE_ENV=development
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DB_NAME=${DB_NAME}
   frontend:
     build: ./frontend/
-    ports:
-      - "3000:3000"
-    links:
-      - backend
     environment:
       - NODE_ENV=development

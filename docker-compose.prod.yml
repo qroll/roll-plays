@@ -9,9 +9,7 @@ services:
       dockerfile: Dockerfile.prod
     environment:
       - NODE_ENV=production
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DB_NAME=${DB_NAME}
+      - VIRTUAL_HOST=api.rollplays.me
   frontend:
     restart: always
     build:
@@ -19,5 +17,7 @@ services:
       dockerfile: Dockerfile.prod
     environment:
       - NODE_ENV=production
-    ports:
-      - "80:80"
+      - VIRTUAL_HOST=rollplays.me
+      - REACT_APP_API_URL=http://api.rollplays.me
+  reverseproxy:
+    restart: always
