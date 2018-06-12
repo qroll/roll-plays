@@ -11,17 +11,16 @@ const StyledLink = TextLink.extend`
     border-radius: 3px;
     color: #fff;
     font-family: "Roboto Condensed";
-    margin: 10px;
     padding: 10px 15px;
-    position: absolute;
-    right: 0;
-    top: 0;
 `;
 
 class Logout extends React.Component {
     render() {
         return (
-            <StyledLink onClick={() => this.props.actions.logout()}>
+            <StyledLink
+                onClick={() => this.props.actions.logout()}
+                style={this.props.style}
+            >
                 Logout
             </StyledLink>
         );

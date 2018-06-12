@@ -7,11 +7,7 @@ const StyledLink = AppLink.extend`
     border-radius: 3px;
     color: #fff;
     font-family: "Roboto Condensed";
-    margin: 10px;
     padding: 10px 15px;
-    position: absolute;
-    right: 0;
-    top: 0;
 `;
 
 class Login extends React.Component {

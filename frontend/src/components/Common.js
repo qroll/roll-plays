@@ -18,6 +18,7 @@ export const ALink = styled.a`
 export const AppLink = styled(Link)`
     color: #333333;
     text-decoration: none;
+    width: fit-content;
 
     &:hover {
         color: #000;
@@ -31,6 +32,7 @@ export const AppLink = styled(Link)`
 export const TextLink = styled.span`
     color: #333333;
     cursor: pointer;
+    width: fit-content;
 
     &:hover {
         color: #000;

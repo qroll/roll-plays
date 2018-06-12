@@ -18,7 +18,7 @@ const Background = styled.img`
     position: fixed;
     top: 0;
     left: 0;
-    height: 120vh;
+    height: 100vh;
     width: 100%;
     z-index: -1;
     object-fit: cover;
@@ -30,18 +30,54 @@ const Attribution = ALink.extend`
     padding: 5px;
 `;
 
-class Layout extends React.Component {
+const Header = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    @media (min-width: 768px) {
+        display: flex;
+        flex-direction: row;
+    }
+`;
+
+const LeftSection = styled.div`
+    flex: 1;
+`;
+
+const RightSection = styled.div`
+    flex: 1;
+    margin: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+`;
+
+class NavHeader extends React.Component {
     render() {
         return (
-            <div className="App">
+            <Header>
+                <LeftSection />
                 <GuestOrUserSession
                     guestComponent={<GuestNavBar />}
                     userComponent={<UserNavBar />}
                 />
-                <GuestOrUserSession
-                    guestComponent={<Login />}
-                    userComponent={<Logout />}
-                />
+                <RightSection>
+                    <GuestOrUserSession
+                        guestComponent={<Login />}
+                        userComponent={<Logout />}
+                    />
+                </RightSection>
+            </Header>
+        );
+    }
+}
+
+class Layout extends React.Component {
+    render() {
+        return (
+            <div className="App">
+                <NavHeader />
                 {this.props.children}
                 <Background
                     src={large}
