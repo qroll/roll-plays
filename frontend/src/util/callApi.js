@@ -2,7 +2,10 @@ import axios from "axios";
 
 let API_URL = "http://";
 let hostname = window.location.hostname;
-API_URL += hostname ? "api." + hostname + ".nip.io" : "localhost:9000";
+API_URL +=
+    process.env.NODE_ENV === "docker_dev"
+        ? "api." + hostname + ".nip.io"
+        : "localhost:9000";
 
 let instance = axios.create({
     baseURL: process.env.REACT_APP_API_URL || API_URL,
