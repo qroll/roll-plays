@@ -4,8 +4,6 @@
     "private": true,
     "dependencies": {
         "axios": "^0.17.1",
-        "draft-js": "^0.10.5",
-        "markdown-it": "^8.4.0",
         "moment": "^2.20.1",
         "react": "^16.2.0",
         "react-autocomplete": "^1.7.2",
@@ -16,6 +14,7 @@
         "react-scripts": "1.0.17",
         "redux": "^3.7.2",
         "redux-thunk": "^2.2.0",
+        "stringify-entities": "^1.3.2",
         "styled-components": "^3.0.2"
     },
     "scripts": {
