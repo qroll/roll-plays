@@ -96,6 +96,23 @@ class Editor extends React.Component {
         this.refs = {};
     }
 
+    computeEndPosition = (blocks, parentBlock, targetChildId) => {
+        let actualPosition = 0;
+        let i = 0;
+        let childId = parentBlock.content[0];
+        while (childId !== targetChildId) {
+            actualPosition += blocks[childId].content[0].length;
+            i++;
+            childId = parentBlock.content[i];
+        }
+        actualPosition += blocks[targetChildId].content[0].length;
+        return {
+            id: targetChildId,
+            index: i,
+            position: actualPosition
+        }
+    }
+
     getIndexAndPositionOfChild = (blocks, parentBlock, position) => {
         let actualPosition = position;
         let i = 0;
@@ -125,7 +142,7 @@ class Editor extends React.Component {
     componentDidUpdate(prevProps, prevState) {
         console.log("_componentDidUpdate")
         let { selection } = this.state;
-        console.log("componentDidUpdate - selection", selection);
+        // console.log("componentDidUpdate - selection", selection);
 
         let selectionObj = window.getSelection();
         selectionObj.removeAllRanges();
@@ -139,8 +156,9 @@ class Editor extends React.Component {
         let { start, end } = this.getStartAndEnd(this.state.blocks, this.state.blocks[startBlockId], startPosition, endPosition);
         // console.log('positions', start, end)
 
-        range.setStart(this.refs[start.id].firstChild, start.position);
-        range.setEnd(this.refs[end.id].firstChild, end.position);
+
+        range.setStart(this.refs[start.id].firstChild || this.refs[start.id], start.position);
+        range.setEnd(this.refs[end.id].firstChild || this.refs[end.id], end.position);
         selectionObj.addRange(range);
 
         // if (range.collapsed) {
@@ -183,21 +201,21 @@ class Editor extends React.Component {
     }
 
     insertText = (prevState, eventInput) => {
-        let selection = prevState.selection;
+        let { blocks, selection } = prevState;
+        let updatedBlocks = { ...blocks };
+        let updatedSelection = { ...selection };
+
         let startBlockId = selection.startBlock;
         let startPosition = selection.startPosition;
         let endBlockId = selection.endBlock;
         let endPosition = selection.endPosition;
 
-        let isSingleBlock = prevState.blocks[startBlockId].parent === prevState.blocks[endBlockId].parent;
-
-        let updatedBlocks = { ...prevState.blocks };
-        let updatedSelection = { ...selection };
+        let isSingleBlock = blocks[startBlockId] === blocks[endBlockId];
 
         if (isSingleBlock) {
             // clear out blocks in between
-            let parentId = prevState.blocks[startBlockId].parent;
-            let parentBlock = { ...prevState.blocks[parentId] };
+            let parentBlock = { ...blocks[startBlockId] };
+            this.deleteTextFromChildren(updatedBlocks, updatedSelection, parentBlock, startBlockId, endPosition, true)
             let startIndex = parentBlock.content.findIndex(id => id === startBlockId);
             let endIndex = parentBlock.content.findIndex(id => id === endBlockId);
 
@@ -207,8 +225,8 @@ class Editor extends React.Component {
 
             if (startIndex === endIndex) {
                 // only have to update the content child
-                let contentChild = prevState.blocks[startBlockId];
-                let currentContent = prevState.blocks[startBlockId].content[0];
+                let contentChild = blocks[startBlockId];
+                let currentContent = blocks[startBlockId].content[0];
                 // replacing content
                 newContent =
                     currentContent.slice(0, startPosition) +
@@ -235,7 +253,7 @@ class Editor extends React.Component {
         return { blocks: updatedBlocks, selection: updatedSelection };
     }
 
-    deleteTextFromChildren = (blocks, selection, parentBlock, startPosition, endPosition) => {
+    deleteTextFromChildren = (blocks, selection, parentBlock, startPosition, endPosition, skip) => {
         let { start, end } = this.getStartAndEnd(blocks, parentBlock, startPosition, endPosition);
         if (start.index === end.index) {
             // single child
@@ -247,6 +265,9 @@ class Editor extends React.Component {
                 if (start.position === 0) {
                     newContent = currentContent;
                 } else {
+                    if (skip) {
+                        return;
+                    }
                     // console.log("delete one");
                     // delete one character
                     newContent =
@@ -311,39 +332,57 @@ class Editor extends React.Component {
         let endPosition = selection.endPosition;
 
         // single content child?
-        let isSingleBlock = blocks[startBlockId] === prevState.blocks[endBlockId];
+        let isSingleBlock = startBlockId === endBlockId;
         if (isSingleBlock) {
+            console.log('deleting for single block')
             // clear out blocks in between
             let parentBlock = { ...blocks[startBlockId] };
             this.deleteTextFromChildren(updatedBlocks, updatedSelection, parentBlock, startPosition, endPosition);
+            // clean dangling text nodes
+            let children = parentBlock.content;
+            let markedForDeletion = children.filter((childId) => updatedBlocks[childId].content[0].length === 0);
+            let remaining = children.filter((childId) => updatedBlocks[childId].content[0].length > 0);
 
-            // if (newContent.length === 0) {
-            //     if (startIndex === 0) {
-            //         console.log("keep an empty text node");
-            //         // keep an empty text node
-            //         updatedSelection.startPosition = 0;
-            //         updatedSelection.endPosition = 0;
-            //     } else {
-            //         console.log("move to the previous node");
-            //         delete updatedBlocks[startBlockId];
-            //         parentBlock.content.splice(startIndex, 1);
-            //         // move to the previous node
-            //         let prevChildId = parentBlock.content[startIndex - 1];
-            //         updatedSelection.startBlock = prevChildId;
-            //         updatedSelection.endBlock = prevChildId;
-            //         updatedSelection.startPosition = prevState.blocks[prevChildId].content[0].length - 1;
-            //         updatedSelection.endPosition = prevState.blocks[prevChildId].content[0].length - 1;
-            //     }
-            // } else {
-            //     updatedBlocks[startBlockId].content = [newContent];
-            // }
+            console.log('markedForDeletion', markedForDeletion);
+            if (markedForDeletion.length === children.length) {
+                console.log("keep an empty text node");
+                // keep an empty text node
+                children.forEach((childId, i) => {
+                    if (i > 0) {
+                        delete updatedBlocks[childId];
+                    }
+                });
+                parentBlock.content = [parentBlock.content[0]];
+                updatedSelection.startPosition = 0;
+                updatedSelection.endPosition = 0;
+            } else if (markedForDeletion.length > 0) {
+                markedForDeletion.forEach((childId, i) => {
+                    delete updatedBlocks[childId];
+                });
+                let lastDeletedNodeId = parentBlock.content.findIndex(childId => childId === markedForDeletion[0]);
+                parentBlock.content = remaining;
+                if (lastDeletedNodeId === 0) {
+                    console.log("keep an empty text node");
+                    // keep an empty text node
+                    parentBlock.content = [parentBlock.content[0], ...remaining];
+                    updatedSelection.startPosition = 0;
+                    updatedSelection.endPosition = 0;
+                } else {
+                    console.log("move to the previous node");
+                    // move to previous node
+                    let start = this.computeEndPosition(updatedBlocks, parentBlock, parentBlock.content[lastDeletedNodeId - 1]);
+                    updatedSelection.startPosition = start.position;
+                    updatedSelection.endPosition = start.position;
+                }
+                updatedBlocks[parentBlock.id] = parentBlock;
+            }
         }
         return { blocks: updatedBlocks, selection: updatedSelection };
     }
 
     _onMetaKey = event => {
         console.log("_onMetaKey");
-        console.log("event key", event.key);
+        // console.log("event key", event.key);
         let eventInput = event.key;
         let eventType = this.mapEventKeyToType(event.key);
         if (!eventType) {
@@ -360,7 +399,7 @@ class Editor extends React.Component {
         event.preventDefault();
         event.stopPropagation();
         console.log("_onInput");
-        console.log("event key", event.key);
+        // console.log("event key", event.key);
         let eventInput = event.key;
         this.setState(prevState => {
             return this.updateContent(prevState, { eventType: EVENT_TYPES.INSERT_TEXT, eventInput })
@@ -438,7 +477,8 @@ class Editor extends React.Component {
 
         if (block.type === "block") {
             return (
-                <Block {...commonProps}>
+                <Block {...commonProps}
+                    contentEditable={false}>
                     {block.content.map(blockId => {
                         let childBlock = this.state.blocks[blockId];
                         return this.renderComponent(childBlock);
@@ -464,7 +504,7 @@ class Editor extends React.Component {
 
     render() {
         // console.log(this.state.order);
-        // console.log(this.state.selection);
+        console.log(this.state.selection);
         // console.log(this.state.blocks);
         return (
             <TextArea innerRef={ref => { this.textarea = ref }}>
