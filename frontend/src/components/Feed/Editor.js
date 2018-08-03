@@ -8,6 +8,8 @@ import Bold from "./components/Bold";
 import Span from "./components/Span";
 import Caret from "./components/Caret";
 
+import EVENT_TYPES from "./EventTypes";
+
 const TextArea = styled.div`
     background-color: #fff;
     border: 1px solid #e0e0e0;
@@ -96,11 +98,6 @@ class Editor extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         console.log("_componentDidUpdate")
-
-        if (this.state.forceKeyboard) {
-            this.setState({ forceKeyboard: false })
-        }
-
         let { selection } = this.state;
         // console.log("componentDidUpdate - selection", selection);
 
@@ -111,27 +108,31 @@ class Editor extends React.Component {
         range.setEnd(this.refs[selection.endBlock].firstChild, selection.endPosition);
         selectionObj.addRange(range);
 
-        if (range.collapsed) {
-            let x = 0, y = 0;
-            if (range.getClientRects().length > 0) {
-                let rect = range.getClientRects()[0];
-                x = rect.left;
-                y = rect.top;
-            }
+        // if (range.collapsed) {
+        //     let x = 0, y = 0;
+        //     if (range.getClientRects().length > 0) {
+        //         let rect = range.getClientRects()[0];
+        //         x = rect.left;
+        //         y = rect.top;
+        //     }
 
-            let parentPos = this.textarea.getClientRects()[0];
-            let relativeX = x - parentPos.left;
-            let relativeY = y - parentPos.top;
+        //     let parentPos = this.textarea.getClientRects()[0];
+        //     let relativeX = x - parentPos.left;
+        //     let relativeY = y - parentPos.top;
 
-            this.caret.style.left = relativeX + 'px';
-            this.caret.style.top = relativeY + 'px';
-        }
+        //     this.caret.style.left = relativeX + 'px';
+        //     this.caret.style.top = relativeY + 'px';
+        // }
     }
 
     mapEventKeyToType = (key) => {
         switch (key) {
             case 'Backspace':
-                return 'deleteContentBackward';
+                return EVENT_TYPES.DELETE_CONTENT_BACKWARD;
+            case 'ArrowLeft':
+                return EVENT_TYPES.ARROW_LEFT;
+            case 'ArrowRight':
+                return EVENT_TYPES.ARROW_RIGHT;
             default:
                 return null;
         }
@@ -148,6 +149,27 @@ class Editor extends React.Component {
 
         let updatedBlocks = { ...prevState.blocks };
         let updatedSelection = { ...selection };
+
+        if (eventType === EVENT_TYPES.DELETE_CONTENT_BACKWARD) {
+            return this.deleteContent(prevState);
+        }
+        if (eventType === EVENT_TYPES.INSERT_TEXT) {
+            return this.insertText(prevState, eventInput);
+        }
+    }
+
+    insertText = (prevState, eventInput) => {
+        let selection = prevState.selection;
+        let startBlockId = selection.startBlock;
+        let startPosition = selection.startPosition;
+        let endBlockId = selection.endBlock;
+        let endPosition = selection.endPosition;
+
+        let isSingleBlock = prevState.blocks[startBlockId].parent === prevState.blocks[endBlockId].parent;
+
+        let updatedBlocks = { ...prevState.blocks };
+        let updatedSelection = { ...selection };
+
         if (isSingleBlock) {
             // clear out blocks in between
             let parentId = prevState.blocks[startBlockId].parent;
@@ -163,66 +185,15 @@ class Editor extends React.Component {
                 // only have to update the content child
                 let contentChild = prevState.blocks[startBlockId];
                 let currentContent = prevState.blocks[startBlockId].content[0];
-
-                if (eventType === 'deleteContentBackward') {
-                    // deleting content
-                    if (startPosition === endPosition) {
-                        if (startPosition === 0) {
-                            newContent = currentContent;
-                        } else {
-                            console.log("delete one");
-                            // delete one character
-                            newContent =
-                                currentContent.slice(0, startPosition - 1) +
-                                currentContent.slice(endPosition);
-                            updatedSelection.startPosition -= 1;
-                            if (updatedSelection.startPosition < 0) {
-                                updatedSelection.startPosition = 0;
-                            }
-                            updatedSelection.endPosition = updatedSelection.startPosition;
-                        }
-                    } else {
-                        console.log("delete selection");
-                        // delete selection
-                        newContent =
-                            currentContent.slice(0, startPosition) +
-                            currentContent.slice(endPosition);
-                        updatedSelection.endPosition = updatedSelection.startPosition;
-                    }
-                } else {
-                    // replacing content
-                    newContent =
-                        currentContent.slice(0, startPosition) +
-                        currentContent.slice(endPosition);
-                    updatedSelection.endPosition = updatedSelection.startPosition;
-                }
+                // replacing content
+                newContent =
+                    currentContent.slice(0, startPosition) +
+                    currentContent.slice(endPosition);
+                updatedSelection.endPosition = updatedSelection.startPosition;
 
                 // console.log('resulting text node', newContent);
                 // console.log('resulting selection', updatedSelection);
-
-                if (newContent.length === 0 && eventType === 'deleteContentBackward') {
-                    if (startIndex === 0) {
-                        console.log("keep an empty text node");
-                        // keep an empty text node
-                        updatedSelection.startPosition = 0;
-                        updatedSelection.endPosition = 0;
-                    } else {
-                        console.log("move to the previous node");
-                        delete updatedBlocks[startBlockId];
-                        parentBlock.content.splice(startIndex, 1);
-                        // move to the previous node
-                        let prevChildId = parentBlock.content[startIndex - 1];
-                        updatedSelection.startBlock = prevChildId;
-                        updatedSelection.endBlock = prevChildId;
-                        updatedSelection.startPosition = prevState.blocks[prevChildId].content[0].length - 1;
-                        updatedSelection.endPosition = prevState.blocks[prevChildId].content[0].length - 1;
-                    }
-                } else {
-                    updatedBlocks[startBlockId].content = [newContent];
-                }
-            }
-
-            if (eventType === 'insertText') {
+                updatedBlocks[startBlockId].content = [newContent];
                 // add in new input
                 newContent =
                     newContent.slice(0, updatedSelection.startPosition) +
@@ -232,15 +203,95 @@ class Editor extends React.Component {
                 updatedSelection.startPosition += 1;
                 updatedSelection.endPosition = updatedSelection.startPosition;
             }
-            console.log('final text node', newContent);
-            console.log('final selection', updatedSelection);
+
+            // console.log('final text node', newContent);
+            // console.log('final selection', updatedSelection);
         }
 
         return { blocks: updatedBlocks, selection: updatedSelection };
     }
 
+    deleteContent = (prevState) => {
+        let selection = prevState.selection;
+        let startBlockId = selection.startBlock;
+        let startPosition = selection.startPosition;
+        let endBlockId = selection.endBlock;
+        let endPosition = selection.endPosition;
+
+        // single content child?
+        let isSingleBlock = prevState.blocks[startBlockId].parent === prevState.blocks[endBlockId].parent;
+
+        let updatedBlocks = { ...prevState.blocks };
+        let updatedSelection = { ...selection };
+        if (isSingleBlock) {
+            // clear out blocks in between
+            let parentId = prevState.blocks[startBlockId].parent;
+            let parentBlock = { ...prevState.blocks[parentId] };
+            let startIndex = parentBlock.content.findIndex(id => id === startBlockId);
+            let endIndex = parentBlock.content.findIndex(id => id === endBlockId);
+
+            // console.log('what are the text positions', startPosition, endPosition);
+            let newContent;
+
+            if (startIndex === endIndex) {
+                // only have to update the content child
+                let contentChild = prevState.blocks[startBlockId];
+                let currentContent = prevState.blocks[startBlockId].content[0];
+
+                // deleting content
+                if (startPosition === endPosition) {
+                    if (startPosition === 0) {
+                        newContent = currentContent;
+                    } else {
+                        console.log("delete one");
+                        // delete one character
+                        newContent =
+                            currentContent.slice(0, startPosition - 1) +
+                            currentContent.slice(endPosition);
+                        updatedSelection.startPosition -= 1;
+                        if (updatedSelection.startPosition < 0) {
+                            updatedSelection.startPosition = 0;
+                        }
+                        updatedSelection.endPosition = updatedSelection.startPosition;
+                    }
+                } else {
+                    console.log("delete selection");
+                    // delete selection
+                    newContent =
+                        currentContent.slice(0, startPosition) +
+                        currentContent.slice(endPosition);
+                    updatedSelection.endPosition = updatedSelection.startPosition;
+                }
+            }
+
+            // console.log('resulting text node', newContent);
+            // console.log('resulting selection', updatedSelection);
+
+            if (newContent.length === 0) {
+                if (startIndex === 0) {
+                    console.log("keep an empty text node");
+                    // keep an empty text node
+                    updatedSelection.startPosition = 0;
+                    updatedSelection.endPosition = 0;
+                } else {
+                    console.log("move to the previous node");
+                    delete updatedBlocks[startBlockId];
+                    parentBlock.content.splice(startIndex, 1);
+                    // move to the previous node
+                    let prevChildId = parentBlock.content[startIndex - 1];
+                    updatedSelection.startBlock = prevChildId;
+                    updatedSelection.endBlock = prevChildId;
+                    updatedSelection.startPosition = prevState.blocks[prevChildId].content[0].length - 1;
+                    updatedSelection.endPosition = prevState.blocks[prevChildId].content[0].length - 1;
+                }
+            } else {
+                updatedBlocks[startBlockId].content = [newContent];
+            }
+        }
+        return { blocks: updatedBlocks, selection: updatedSelection };
+    }
+
     _onMetaKey = event => {
-        event.stopPropagation();
         console.log("_onMetaKey");
         console.log("event key", event.key);
         let eventInput = event.key;
@@ -248,18 +299,21 @@ class Editor extends React.Component {
         if (!eventType) {
             return;
         }
+        event.preventDefault();
+        event.stopPropagation();
         this.setState(prevState => {
             return this.updateContent(prevState, { eventType, eventInput })
         })
     };
 
     _onInput = event => {
+        event.preventDefault();
         event.stopPropagation();
         console.log("_onInput");
         console.log("event key", event.key);
         let eventInput = event.key;
         this.setState(prevState => {
-            return this.updateContent(prevState, { eventType: 'insertText', eventInput })
+            return this.updateContent(prevState, { eventType: EVENT_TYPES.INSERT_TEXT, eventInput })
         });
     };
 
@@ -333,7 +387,8 @@ class Editor extends React.Component {
             onMouseUp: this._onSelectionEnd(block.id),
             innerRef: ref => { this.refs = { ...this.refs, [block.id]: ref }; },
             key: block.id,
-            contentEditable: false,
+            contentEditable: true,
+            suppressContentEditableWarning: true,
             onKeyDown: this._onMetaKey,
             onKeyPress: this._onInput,
             tabIndex: 0
@@ -367,20 +422,17 @@ class Editor extends React.Component {
 
     render() {
         // console.log(this.state.order);
-        console.log(this.state.selection);
-        // console.log(this.state.blocks);
+        // console.log(this.state.selection);
+        console.log(this.state.blocks);
         return (
             <TextArea innerRef={ref => { this.textarea = ref }}>
-                <div
-                    contentEditable
-                    suppressContentEditableWarning
-                >
+                <div>
                     {this.state.order.map(blockId => {
                         let block = this.state.blocks[blockId];
                         return this.renderComponent(block);
                     })}
                 </div>
-                <Caret innerRef={ref => { this.caret = ref }} />
+                {/* <Caret innerRef={ref => { this.caret = ref }} /> */}
             </TextArea>
         );
     }
