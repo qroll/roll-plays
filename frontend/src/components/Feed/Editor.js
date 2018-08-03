@@ -79,8 +79,8 @@ class EditorState {
             },
             order: [blockId, blockId2],
             selection: {
-                startBlock: textContentId,
-                endBlock: textContentId,
+                startBlock: blockId,
+                endBlock: blockId,
                 startPosition: 0,
                 endPosition: 0
             },
@@ -104,8 +104,37 @@ class Editor extends React.Component {
         let selectionObj = window.getSelection();
         selectionObj.removeAllRanges();
         let range = document.createRange();
-        range.setStart(this.refs[selection.startBlock].firstChild, selection.startPosition);
-        range.setEnd(this.refs[selection.endBlock].firstChild, selection.endPosition);
+
+
+        let startPosition = selection.startPosition;
+        let endPosition = selection.endPosition;
+        let startBlockId = selection.startBlock;
+        let endBlockId = selection.endBlock;
+        let actualStartPosition = startPosition, actualEndPosition = endPosition;
+        let contentBlocks = this.state.blocks[startBlockId].content;
+        let endContentBlocks = this.state.blocks[endBlockId].content;
+
+        let i = 0;
+        let currNode = contentBlocks[0];
+
+        while (actualStartPosition - this.state.blocks[currNode].content[0].length > 0) {
+            actualStartPosition -= this.state.blocks[currNode].content[0].length;
+            i++;
+            currNode = contentBlocks[i];
+        }
+
+        let j = 0;
+        let endCurrNode = endContentBlocks[0];
+        while (actualEndPosition - this.state.blocks[endCurrNode].content[0].length > 0) {
+            actualEndPosition -= this.state.blocks[endCurrNode].content[0].length;
+            j++;
+            endCurrNode = endContentBlocks[j];
+        }
+
+        // console.log('positions', actualEndPosition, actualStartPosition)
+
+        range.setStart(this.refs[currNode].firstChild, actualStartPosition);
+        range.setEnd(this.refs[endCurrNode].firstChild, actualEndPosition);
         selectionObj.addRange(range);
 
         // if (range.collapsed) {
@@ -333,11 +362,38 @@ class Editor extends React.Component {
         let startPosition = selectionObj.getRangeAt(0).startOffset;
         let endPosition = selectionObj.getRangeAt(0).endOffset;
 
+        let parentBlockId = this.state.blocks[startContainer.parentNode.dataset.blockid].parent;
+        let endParentBlockId = this.state.blocks[endContainer.parentNode.dataset.blockid].parent;
+        let actualStartPosition = 0, actualEndPosition = 0;
+        let startId = startContainer.parentNode.dataset.blockid + "";
+        let endId = endContainer.parentNode.dataset.blockid + "";
+        let contentBlocks = this.state.blocks[parentBlockId].content;
+        let endContentBlocks = this.state.blocks[endParentBlockId].content;
+
+        let i = 0;
+        let currNode = contentBlocks[0];
+        while (currNode !== startId) {
+            actualStartPosition += this.state.blocks[currNode].content[0].length;
+            i++;
+            currNode = contentBlocks[i];
+        }
+        actualStartPosition += startPosition;
+
+        let j = 0;
+        let endCurrNode = endContentBlocks[0];
+        while (endCurrNode !== endId) {
+            actualEndPosition += this.state.blocks[endCurrNode].content[0].length;
+            j++;
+            endCurrNode = contentBlocks[j];
+
+        }
+        actualEndPosition += endPosition;
+
         let selectionState = {
-            startBlock: startContainer.parentNode.dataset.blockid,
-            endBlock: endContainer.parentNode.dataset.blockid,
-            startPosition,
-            endPosition
+            startBlock: parentBlockId,
+            endBlock: endParentBlockId,
+            startPosition: actualStartPosition,
+            endPosition: actualEndPosition
         }
 
         // console.log("selectionState", selectionState)
@@ -423,7 +479,7 @@ class Editor extends React.Component {
     render() {
         // console.log(this.state.order);
         // console.log(this.state.selection);
-        console.log(this.state.blocks);
+        // console.log(this.state.blocks);
         return (
             <TextArea innerRef={ref => { this.textarea = ref }}>
                 <div>
