@@ -193,57 +193,37 @@ class Editor extends React.Component {
         }
     }
 
-    insertText = (prevState, eventInput) => {
-        let { blocks, selection } = prevState;
-        let updatedBlocks = { ...blocks };
-        let updatedSelection = { ...selection };
+    insertText = (state, eventInput) => {
+        let { start, end } = this.getStartAndEnd(state.blocks, state.selection);
 
-        let startBlockId = selection.startBlockId;
-        let startPosition = selection.startPosition;
-        let endBlockId = selection.endBlock;
-        let endPosition = selection.endPosition;
+        console.log("insertText")
+        // remove any selected text first
+        let nextState = this.deleteSelectionRange(state, start, end);
+        nextState = this.cleanDanglingTextNodes(nextState, start, end);
 
-        let isSingleBlock = blocks[startBlockId] === blocks[endBlockId];
+        let updatedBlocks = { ...nextState.blocks };
+        let updatedSelection = { ...nextState.selection };
 
-        if (isSingleBlock) {
-            // clear out blocks in between
-            let parentBlock = { ...blocks[startBlockId] };
-            this.deleteTextFromChildren(updatedBlocks, updatedSelection, parentBlock, startBlockId, endPosition, true)
-            let startIndex = parentBlock.content.findIndex(id => id === startBlockId);
-            let endIndex = parentBlock.content.findIndex(id => id === endBlockId);
+        let startBlockId = updatedSelection.startBlockId;
+        let startPosition = updatedSelection.startPosition;
 
-            // single content child?
-            // console.log('what are the text positions', startPosition, endPosition);
-            let newContent;
+        // console.log('what are the text positions', startPosition, endPosition);
+        let { id: childId } = this.getIndexAndPositionOfChild(updatedBlocks, updatedBlocks[startBlockId], startPosition);
+        // console.log("child block", updatedBlocks[childId]);
+        let newContent = updatedBlocks[childId].content[0];
 
-            if (startIndex === endIndex) {
-                // only have to update the content child
-                let contentChild = blocks[startBlockId];
-                let currentContent = blocks[startBlockId].content[0];
-                // replacing content
-                newContent =
-                    currentContent.slice(0, startPosition) +
-                    currentContent.slice(endPosition);
-                updatedSelection.endPosition = updatedSelection.startPosition;
+        // add in new input
+        newContent =
+            newContent.slice(0, updatedSelection.startPosition) +
+            (eventInput || '') +
+            newContent.slice(updatedSelection.startPosition);
+        updatedBlocks[childId].content = [newContent];
+        updatedSelection.startPosition += 1;
+        updatedSelection.endPosition = updatedSelection.startPosition;
+        console.log('final text node', newContent);
+        console.log('final selection', updatedSelection);
 
-                // console.log('resulting text node', newContent);
-                // console.log('resulting selection', updatedSelection);
-                updatedBlocks[startBlockId].content = [newContent];
-                // add in new input
-                newContent =
-                    newContent.slice(0, updatedSelection.startPosition) +
-                    (eventInput || '') +
-                    newContent.slice(updatedSelection.startPosition);
-                updatedBlocks[startBlockId].content = [newContent];
-                updatedSelection.startPosition += 1;
-                updatedSelection.endPosition = updatedSelection.startPosition;
-            }
-
-            // console.log('final text node', newContent);
-            // console.log('final selection', updatedSelection);
-        }
-
-        return { blocks: updatedBlocks, selection: updatedSelection };
+        return { ...nextState, blocks: updatedBlocks, selection: updatedSelection };
     }
 
     deleteSelection = (state) => {
@@ -251,17 +231,16 @@ class Editor extends React.Component {
         let { start, end } = this.getStartAndEnd(blocks, selection);
 
         if (start.id === end.id && start.index === end.index) {
-            console.log("deleteSelectionPoint")
             let nextState = this.deleteSelectionPoint(state, start, end);
             return this.cleanDanglingTextNodes(nextState, start, end);
         } else {
-            console.log("deleteSelectionRange")
             let nextState = this.deleteSelectionRange(state, start, end);
             return this.cleanDanglingTextNodes(nextState, start, end);
         }
     }
 
     deleteSelectionPoint = (state, start, end) => {
+        // console.log("deleteSelectionPoint")
         let { blocks: oldBlocks, selection: oldSelection } = state;
         let blocks = { ...oldBlocks };
         let selection = { ...oldSelection };
@@ -302,6 +281,7 @@ class Editor extends React.Component {
     }
 
     deleteSelectionRange = (state, start, end) => {
+        console.log("deleteSelectionRange")
         let { blocks: oldBlocks, selection: oldSelection } = state;
         let blocks = { ...oldBlocks };
         let selection = { ...oldSelection };
@@ -310,7 +290,19 @@ class Editor extends React.Component {
         let startParentBlock = blocks[startBlockId];
         let endParentBlock = blocks[endBlockId];
 
-        if (startBlockId === endBlockId) {
+        if (start.index === end.index) {
+            // spanning single child
+            let currentContent = blocks[start.id].content[0];
+
+            let newContent =
+                currentContent.slice(0, start.position) + currentContent.slice(end.position);
+            blocks[start.id].content = [newContent];
+
+            selection.startPosition = selection.startPosition;
+            selection.endPosition = selection.startPosition;
+
+            return { ...state, blocks, selection };
+        } else {
             // spanning multiple children in the same block
             // delete (partial) first child
             let currentContent = blocks[start.id].content[0];
@@ -322,6 +314,7 @@ class Editor extends React.Component {
             start.index++;
             // delete in between
             while (start.index < end.index) {
+                console.log(start.index)
                 let currBlockId = startParentBlock.content[start.index];
                 let newContent = "";
                 blocks[currBlockId].content = [newContent];
@@ -336,12 +329,13 @@ class Editor extends React.Component {
             selection.startPosition = selection.startPosition;
             selection.endPosition = selection.startPosition;
 
-            return { ...state, blocks, selection }
+            return { ...state, blocks, selection };
         }
-        return state
+        return state;
     }
 
     cleanDanglingTextNodes = (state, start, end) => {
+        console.log("cleanDanglingTextNodes")
         let { blocks, selection } = state;
         let updatedBlocks = { ...blocks };
         let updatedSelection = { ...selection };
@@ -521,8 +515,8 @@ class Editor extends React.Component {
 
     render() {
         // console.log(this.state.order);
-        console.log(this.state.selection);
-        // console.log(this.state.blocks);
+        // console.log(this.state.selection);
+        console.log(this.state.blocks);
         return (
             <TextArea innerRef={ref => { this.textarea = ref }} contentEditable suppressContentEditableWarning onKeyDown={this._onMetaKey}
                 onKeyPress={this._onInput}>
