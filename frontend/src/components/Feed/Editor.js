@@ -28,10 +28,6 @@ const uuid = () => {
     );
 };
 
-const insertAfter = (arr, element, index) => {
-    return [...arr.slice(0, index + 1), element, ...arr.slice(index + 1)];
-};
-
 class EditorState {
     static init() {
         let blockId = uuid();
@@ -79,8 +75,8 @@ class EditorState {
             },
             order: [blockId, blockId2],
             selection: {
-                startBlock: blockId,
-                endBlock: blockId,
+                startBlockId: blockId,
+                endBlockId: blockId,
                 startPosition: 0,
                 endPosition: 0
             },
@@ -129,9 +125,10 @@ class Editor extends React.Component {
         }
     }
 
-    getStartAndEnd = (blocks, parentBlock, startPosition, endPosition) => {
-        let start = this.getIndexAndPositionOfChild(blocks, parentBlock, startPosition);
-        let end = this.getIndexAndPositionOfChild(blocks, parentBlock, endPosition);
+    getStartAndEnd = (blocks, selection) => {
+        let { startBlockId, endBlockId, startPosition, endPosition } = selection;
+        let start = this.getIndexAndPositionOfChild(blocks, blocks[startBlockId], startPosition);
+        let end = this.getIndexAndPositionOfChild(blocks, blocks[endBlockId], endPosition);
 
         return {
             start,
@@ -148,14 +145,8 @@ class Editor extends React.Component {
         selectionObj.removeAllRanges();
         let range = document.createRange();
 
-        let startPosition = selection.startPosition;
-        let endPosition = selection.endPosition;
-        let startBlockId = selection.startBlock;
-        let endBlockId = selection.endBlock;
-
-        let { start, end } = this.getStartAndEnd(this.state.blocks, this.state.blocks[startBlockId], startPosition, endPosition);
+        let { start, end } = this.getStartAndEnd(this.state.blocks, this.state.selection);
         // console.log('positions', start, end)
-
 
         range.setStart(this.refs[start.id].firstChild || this.refs[start.id], start.position);
         range.setEnd(this.refs[end.id].firstChild || this.refs[end.id], end.position);
@@ -193,9 +184,11 @@ class Editor extends React.Component {
 
     updateContent = (prevState, { eventType, eventInput }) => {
         if (eventType === EVENT_TYPES.DELETE_CONTENT_BACKWARD) {
-            return this.deleteContent(prevState);
+            // console.log("deleteContent");
+            return this.deleteSelection(prevState);
         }
         if (eventType === EVENT_TYPES.INSERT_TEXT) {
+            // console.log("insertText");
             return this.insertText(prevState, eventInput);
         }
     }
@@ -205,7 +198,7 @@ class Editor extends React.Component {
         let updatedBlocks = { ...blocks };
         let updatedSelection = { ...selection };
 
-        let startBlockId = selection.startBlock;
+        let startBlockId = selection.startBlockId;
         let startPosition = selection.startPosition;
         let endBlockId = selection.endBlock;
         let endPosition = selection.endPosition;
@@ -253,47 +246,72 @@ class Editor extends React.Component {
         return { blocks: updatedBlocks, selection: updatedSelection };
     }
 
-    deleteTextFromChildren = (blocks, selection, parentBlock, startPosition, endPosition, skip) => {
-        let { start, end } = this.getStartAndEnd(blocks, parentBlock, startPosition, endPosition);
-        if (start.index === end.index) {
-            // single child
-            let currentContent = blocks[start.id].content[0];
+    deleteSelection = (state) => {
+        let { blocks, selection } = state;
+        let { start, end } = this.getStartAndEnd(blocks, selection);
 
-            let newContent;
-            // deleting content
-            if (start.position === end.position) {
-                if (start.position === 0) {
-                    newContent = currentContent;
-                } else {
-                    if (skip) {
-                        return;
-                    }
-                    // console.log("delete one");
-                    // delete one character
-                    newContent =
-                        currentContent.slice(0, start.position - 1) +
-                        currentContent.slice(end.position);
-                    selection.startPosition -= 1;
-                    if (selection.startPosition < 0) {
-                        selection.startPosition = 0;
-                    }
-                    selection.endPosition = selection.startPosition;
-                }
+        if (start.id === end.id && start.index === end.index) {
+            console.log("deleteSelectionPoint")
+            let nextState = this.deleteSelectionPoint(state, start, end);
+            return this.cleanDanglingTextNodes(nextState, start, end);
+        } else {
+            console.log("deleteSelectionRange")
+            let nextState = this.deleteSelectionRange(state, start, end);
+            return this.cleanDanglingTextNodes(nextState, start, end);
+        }
+    }
+
+    deleteSelectionPoint = (state, start, end) => {
+        let { blocks: oldBlocks, selection: oldSelection } = state;
+        let blocks = { ...oldBlocks };
+        let selection = { ...oldSelection };
+
+        let currentContent = blocks[start.id].content[0];
+
+        let newContent;
+        // deleting content
+        if (start.position === end.position) {
+            if (start.position === 0) {
+                newContent = currentContent;
             } else {
-                // console.log("delete selection");
-                // delete selection
+                // console.log("delete one");
+                // delete one character
                 newContent =
-                    currentContent.slice(0, start.position) +
+                    currentContent.slice(0, start.position - 1) +
                     currentContent.slice(end.position);
+                selection.startPosition -= 1;
+                if (selection.startPosition < 0) {
+                    selection.startPosition = 0;
+                }
                 selection.endPosition = selection.startPosition;
             }
-
-            // console.log('resulting text node', newContent);
-            // console.log('resulting selection', updatedSelection);
-
-            blocks[start.id].content = [newContent];
         } else {
-            // spanning multiple children
+            // console.log("delete selection");
+            // delete selection
+            newContent =
+                currentContent.slice(0, start.position) +
+                currentContent.slice(end.position);
+            selection.endPosition = selection.startPosition;
+        }
+
+        // console.log('resulting text node', newContent);
+        // console.log('resulting selection', updatedSelection);
+        blocks[start.id].content = [newContent];
+
+        return { ...state, blocks, selection }
+    }
+
+    deleteSelectionRange = (state, start, end) => {
+        let { blocks: oldBlocks, selection: oldSelection } = state;
+        let blocks = { ...oldBlocks };
+        let selection = { ...oldSelection };
+
+        let { startBlockId, endBlockId } = selection;
+        let startParentBlock = blocks[startBlockId];
+        let endParentBlock = blocks[endBlockId];
+
+        if (startBlockId === endBlockId) {
+            // spanning multiple children in the same block
             // delete (partial) first child
             let currentContent = blocks[start.id].content[0];
 
@@ -304,7 +322,7 @@ class Editor extends React.Component {
             start.index++;
             // delete in between
             while (start.index < end.index) {
-                let currBlockId = parentBlock.content[start.index];
+                let currBlockId = startParentBlock.content[start.index];
                 let newContent = "";
                 blocks[currBlockId].content = [newContent];
                 start.index++;
@@ -315,69 +333,68 @@ class Editor extends React.Component {
             let newEndContent =
                 endContent.slice(end.position);
             blocks[end.id].content = [newEndContent];
-
             selection.startPosition = selection.startPosition;
             selection.endPosition = selection.startPosition;
+
+            return { ...state, blocks, selection }
         }
+        return state
     }
 
-    deleteContent = (prevState) => {
-        let { blocks, selection } = prevState;
+    cleanDanglingTextNodes = (state, start, end) => {
+        let { blocks, selection } = state;
         let updatedBlocks = { ...blocks };
         let updatedSelection = { ...selection };
+        let { startBlockId } = updatedSelection;
 
-        let startBlockId = selection.startBlock;
-        let startPosition = selection.startPosition;
-        let endBlockId = selection.endBlock;
-        let endPosition = selection.endPosition;
+        let parentBlock = { ...updatedBlocks[startBlockId] };
+        let children = parentBlock.content;
+        let markedForDeletion = children.filter((childId) => updatedBlocks[childId].content[0].length === 0);
+        let remaining = children.filter((childId) => updatedBlocks[childId].content[0].length > 0);
 
-        // single content child?
-        let isSingleBlock = startBlockId === endBlockId;
-        if (isSingleBlock) {
-            console.log('deleting for single block')
-            // clear out blocks in between
-            let parentBlock = { ...blocks[startBlockId] };
-            this.deleteTextFromChildren(updatedBlocks, updatedSelection, parentBlock, startPosition, endPosition);
-            // clean dangling text nodes
-            let children = parentBlock.content;
-            let markedForDeletion = children.filter((childId) => updatedBlocks[childId].content[0].length === 0);
-            let remaining = children.filter((childId) => updatedBlocks[childId].content[0].length > 0);
-
-            console.log('markedForDeletion', markedForDeletion);
-            if (markedForDeletion.length === children.length) {
+        console.log('markedForDeletion', markedForDeletion);
+        if (markedForDeletion.length === children.length) {
+            console.log("keep an empty text node");
+            // keep an empty text node
+            markedForDeletion.forEach((childId, i) => {
+                if (i === 0) {
+                    return;
+                }
+                delete updatedBlocks[childId];
+            });
+            parentBlock.content = [parentBlock.content[0]];
+            updatedSelection.startPosition = 0;
+            updatedSelection.endPosition = 0;
+            updatedBlocks[parentBlock.id] = parentBlock;
+        } else if (markedForDeletion.length > 0) {
+            let lastDeletedNodeId = parentBlock.content.findIndex(childId => childId === markedForDeletion[0]);
+            if (lastDeletedNodeId === 0) {
+                markedForDeletion.forEach((childId, i) => {
+                    if (i === 0) {
+                        return;
+                    }
+                    delete updatedBlocks[childId];
+                });
                 console.log("keep an empty text node");
                 // keep an empty text node
-                children.forEach((childId, i) => {
-                    if (i > 0) {
-                        delete updatedBlocks[childId];
-                    }
-                });
-                parentBlock.content = [parentBlock.content[0]];
+                parentBlock.content = [parentBlock.content[0], ...remaining];
                 updatedSelection.startPosition = 0;
                 updatedSelection.endPosition = 0;
-            } else if (markedForDeletion.length > 0) {
+            } else {
+                parentBlock.content = remaining;
                 markedForDeletion.forEach((childId, i) => {
                     delete updatedBlocks[childId];
                 });
-                let lastDeletedNodeId = parentBlock.content.findIndex(childId => childId === markedForDeletion[0]);
-                parentBlock.content = remaining;
-                if (lastDeletedNodeId === 0) {
-                    console.log("keep an empty text node");
-                    // keep an empty text node
-                    parentBlock.content = [parentBlock.content[0], ...remaining];
-                    updatedSelection.startPosition = 0;
-                    updatedSelection.endPosition = 0;
-                } else {
-                    console.log("move to the previous node");
-                    // move to previous node
-                    let start = this.computeEndPosition(updatedBlocks, parentBlock, parentBlock.content[lastDeletedNodeId - 1]);
-                    updatedSelection.startPosition = start.position;
-                    updatedSelection.endPosition = start.position;
-                }
-                updatedBlocks[parentBlock.id] = parentBlock;
+                console.log("move to the previous node");
+                // move to previous node
+                let start = this.computeEndPosition(updatedBlocks, parentBlock, parentBlock.content[lastDeletedNodeId - 1]);
+                updatedSelection.startPosition = start.position;
+                updatedSelection.endPosition = start.position;
             }
+            updatedBlocks[parentBlock.id] = parentBlock;
         }
-        return { blocks: updatedBlocks, selection: updatedSelection };
+
+        return { ...state, blocks: updatedBlocks, selection: updatedSelection };
     }
 
     _onMetaKey = event => {
@@ -450,8 +467,8 @@ class Editor extends React.Component {
         actualEndPosition += endPosition;
 
         let selectionState = {
-            startBlock: parentBlockId,
-            endBlock: endParentBlockId,
+            startBlockId: parentBlockId,
+            endBlockId: endParentBlockId,
             startPosition: actualStartPosition,
             endPosition: actualEndPosition
         }
@@ -462,23 +479,23 @@ class Editor extends React.Component {
     };
 
     renderComponent(block) {
-        // console.log("rendering component", block);
+        // console.log("rendering component", block.content);
         let commonProps = {
-            "data-blockid": block.id,
-            onMouseUp: this._onSelectionEnd(block.id),
-            innerRef: ref => { this.refs = { ...this.refs, [block.id]: ref }; },
             key: block.id,
-            contentEditable: true,
-            suppressContentEditableWarning: true,
+            "data-blockid": block.id,
+            innerRef: ref => { this.refs = { ...this.refs, [block.id]: ref }; },
+            onMouseUp: this._onSelectionEnd(block.id),
+            // contentEditable: true,
+            // suppressContentEditableWarning: true
+        }
+        let inputProps = {
             onKeyDown: this._onMetaKey,
-            onKeyPress: this._onInput,
-            tabIndex: 0
+            onKeyPress: this._onInput
         }
 
         if (block.type === "block") {
             return (
-                <Block {...commonProps}
-                    contentEditable={false}>
+                <Block {...commonProps}>
                     {block.content.map(blockId => {
                         let childBlock = this.state.blocks[blockId];
                         return this.renderComponent(childBlock);
@@ -488,14 +505,14 @@ class Editor extends React.Component {
         }
         if (block.type === "text") {
             return (
-                <Span {...commonProps}>
+                <Span {...commonProps} {...inputProps}>
                     {block.content[0]}
                 </Span>
             );
         }
         if (block.type === "bold") {
             return (
-                <Bold {...commonProps}>
+                <Bold {...commonProps} {...inputProps}>
                     {block.content[0]}
                 </Bold>
             );
@@ -507,7 +524,8 @@ class Editor extends React.Component {
         console.log(this.state.selection);
         // console.log(this.state.blocks);
         return (
-            <TextArea innerRef={ref => { this.textarea = ref }}>
+            <TextArea innerRef={ref => { this.textarea = ref }} contentEditable suppressContentEditableWarning onKeyDown={this._onMetaKey}
+                onKeyPress={this._onInput}>
                 <div>
                     {this.state.order.map(blockId => {
                         let block = this.state.blocks[blockId];
