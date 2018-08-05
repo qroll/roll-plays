@@ -25,6 +25,7 @@ class Editor extends React.Component {
         super(props);
         this.state = EditorState.init();
         this.refs = {};
+        this.test = true;
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -68,14 +69,30 @@ class Editor extends React.Component {
         // }
     }
 
-    _onInput = event => {
-        console.log("_onInput");
+    _onCompositionEnd = event => {
+        console.log("_onCompositionEnd");
+        // console.log("event", event.nativeEvent);
         event.preventDefault();
         event.stopPropagation();
-        // event.nativeEvent.preventDefault();
-        // event.nativeEvent.stopPropagation();
-        // event.nativeEvent.stopImmediatePropagation();
-        console.log(event.nativeEvent);
+
+        let eventInput = event.nativeEvent.data;
+        this.setState(prevState => {
+            return EditorState.updateContent(prevState, {
+                eventType: EVENT_TYPES.INSERT_TEXT,
+                eventInput
+            });
+        });
+    };
+
+    _onInput = event => {
+        console.log("_onInput");
+        // console.log("event", event.nativeEvent);
+        if (event.nativeEvent.isComposing) {
+            return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+        event.nativeEvent.stopImmediatePropagation();
 
         let eventInput = event.nativeEvent.data;
         let eventType = EditorState.mapInputEventToType(event.nativeEvent);
@@ -123,65 +140,72 @@ class Editor extends React.Component {
     };
 
     _onSelectionEnd = event => {
-        console.log("_onSelectionEnd");
-        // console.log("blockId", blockId);
-        event.preventDefault();
-        event.stopPropagation();
-        // event.nativeEvent.stopImmediatePropagation();
-
-        let selectionObj = window.getSelection();
-        let rangeCount = selectionObj.rangeCount;
-        if (!(rangeCount > 0)) {
+        if (this.test) {
+            this.test = false;
             return;
         }
-        let startContainer = selectionObj.getRangeAt(0).startContainer;
-        let endContainer = selectionObj.getRangeAt(0).endContainer;
-        let startPosition = selectionObj.getRangeAt(0).startOffset;
-        let endPosition = selectionObj.getRangeAt(0).endOffset;
+        console.log("_onSelectionEnd");
+        // console.log("event", event.nativeEvent);
+        event.preventDefault();
+        event.stopPropagation();
 
-        let parentBlockId = this.state.blocks[
-            startContainer.parentNode.dataset.blockid
-        ].parent;
-        let endParentBlockId = this.state.blocks[
-            endContainer.parentNode.dataset.blockid
-        ].parent;
-        let actualStartPosition = 0,
-            actualEndPosition = 0;
-        let startId = startContainer.parentNode.dataset.blockid + "";
-        let endId = endContainer.parentNode.dataset.blockid + "";
-        let contentBlocks = this.state.blocks[parentBlockId].content;
-        let endContentBlocks = this.state.blocks[endParentBlockId].content;
+        this.setState(prevState => {
+            let selectionObj = window.getSelection();
+            let rangeCount = selectionObj.rangeCount;
+            if (!(rangeCount > 0)) {
+                return;
+            }
+            let startContainer = selectionObj.getRangeAt(0).startContainer;
+            let endContainer = selectionObj.getRangeAt(0).endContainer;
+            let startPosition = selectionObj.getRangeAt(0).startOffset;
+            let endPosition = selectionObj.getRangeAt(0).endOffset;
 
-        let i = 0;
-        let currNode = contentBlocks[0];
-        while (currNode !== startId) {
-            actualStartPosition += this.state.blocks[currNode].content[0]
-                .length;
-            i++;
-            currNode = contentBlocks[i];
-        }
-        actualStartPosition += startPosition;
+            let parentBlockId =
+                prevState.blocks[startContainer.parentNode.dataset.blockid]
+                    .parent;
+            let endParentBlockId =
+                prevState.blocks[endContainer.parentNode.dataset.blockid]
+                    .parent;
+            let actualStartPosition = 0,
+                actualEndPosition = 0;
+            let startId = startContainer.parentNode.dataset.blockid + "";
+            let endId = endContainer.parentNode.dataset.blockid + "";
+            let contentBlocks = prevState.blocks[parentBlockId].content;
+            let endContentBlocks = prevState.blocks[endParentBlockId].content;
 
-        let j = 0;
-        let endCurrNode = endContentBlocks[0];
-        while (endCurrNode !== endId) {
-            actualEndPosition += this.state.blocks[endCurrNode].content[0]
-                .length;
-            j++;
-            endCurrNode = contentBlocks[j];
-        }
-        actualEndPosition += endPosition;
+            console.log("startId", startId, "contentBlocks", contentBlocks);
 
-        let selectionState = {
-            startBlockId: parentBlockId,
-            endBlockId: endParentBlockId,
-            startPosition: actualStartPosition,
-            endPosition: actualEndPosition
-        };
+            let i = 0;
+            let currNode = contentBlocks[0];
+            while (currNode !== startId) {
+                actualStartPosition +=
+                    prevState.blocks[currNode].content[0].length;
+                i++;
+                currNode = contentBlocks[i];
+            }
+            actualStartPosition += startPosition;
 
-        // console.log("selectionState", selectionState)
+            let j = 0;
+            let endCurrNode = endContentBlocks[0];
+            while (endCurrNode !== endId) {
+                actualEndPosition +=
+                    prevState.blocks[endCurrNode].content[0].length;
+                j++;
+                endCurrNode = contentBlocks[j];
+            }
+            actualEndPosition += endPosition;
 
-        this.setState({ selection: selectionState });
+            let selectionState = {
+                startBlockId: parentBlockId,
+                endBlockId: endParentBlockId,
+                startPosition: actualStartPosition,
+                endPosition: actualEndPosition
+            };
+            // console.log("selectionState", selectionState)
+            return {
+                selection: selectionState
+            };
+        });
     };
 
     renderComponent(block) {
@@ -230,6 +254,7 @@ class Editor extends React.Component {
     _help = event => {
         if (event.key === "Enter") {
             event.preventDefault();
+            event.stopPropagation();
             this.setState(prevState => {
                 return EditorState.updateContent(prevState, {
                     eventType: EVENT_TYPES.INSERT_PARAGRAPH,
@@ -241,8 +266,8 @@ class Editor extends React.Component {
 
     render() {
         // console.log(this.state.order);
-        console.log(this.state.selection);
-        console.log(this.state.blocks);
+        // console.log(this.state.selection);
+        // console.log(this.state.blocks);
         return (
             <TextArea
                 innerRef={ref => {
@@ -252,6 +277,8 @@ class Editor extends React.Component {
                 suppressContentEditableWarning
                 onInput={this._onInput}
                 onSelect={this._onSelectionEnd}
+                onCompositionEnd={this._onCompositionEnd}
+                onKeyDown={this._help}
             >
                 <div>
                     {this.state.order.map(blockId => {

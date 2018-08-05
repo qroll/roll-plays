@@ -235,22 +235,35 @@ class EditorState {
         // add in new input
         let newContent = originalContent.slice(actualPosition);
 
+        // console.log("final text node", newContent);
+
         // update text in previous text block
         blocks[childId].content = [originalContent.slice(0, actualPosition)];
 
-        // create a new text block
+        let content = blocks[selection.startBlockId].content;
+        let remainingIndex = content.findIndex(
+            currChildId => currChildId === childId
+        );
+
+        // remove the remaining children from the current block
+        blocks[selection.startBlockId].content = content.slice(
+            0,
+            remainingIndex + 1
+        );
+
+        // create a new block with the remaining children and prepend a new text block
         let newBlockId = uuid();
         let newTextId = uuid();
         let newText = {
             id: newTextId,
-            type: "text",
+            type: blocks[childId].type,
             content: [newContent],
             parent: newBlockId
         };
         let newBlock = {
             id: newBlockId,
             type: "block",
-            content: [newTextId]
+            content: [newTextId, ...content.slice(remainingIndex + 1)]
         };
 
         let index = order.findIndex(
@@ -264,6 +277,10 @@ class EditorState {
 
         blocks[newBlockId] = newBlock;
         blocks[newTextId] = newText;
+
+        newBlock.content.forEach(
+            blockId => (blocks[blockId].parent = newBlockId)
+        );
 
         selection.startBlockId = newBlockId;
         selection.endBlockId = newBlockId;
