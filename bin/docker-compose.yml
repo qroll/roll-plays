@@ -1,0 +1,12 @@
+version: '3'
+services:
+  backend:
+    build: ./backend/
+    restart: always
+  frontend:
+    build: ./frontend/
+    restart: always
+networks:
+  default:
+    external:
+      name: network-rollplays
