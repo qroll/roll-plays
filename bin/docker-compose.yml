@@ -1,11 +1,15 @@
 version: '3'
 services:
   backend:
-    build: ./backend/
+    build: ../backend/
     restart: always
+    ports:
+     - "9000:9000"
   frontend:
-    build: ./frontend/
+    build: ../frontend/
     restart: always
+    ports:
+     - "3000:3000"
 networks:
   default:
     external:
