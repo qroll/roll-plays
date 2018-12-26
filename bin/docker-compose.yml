@@ -14,12 +14,13 @@ services:
     build: ../nginx/
     ports:
       - 80:80
+      - 443:443
     volumes:
-      - volume-rollplays:/srv/rollplays
+      - volume-rollplays-letsencrypt:/etc/letsencrypt
 networks:
   default:
     external:
       name: network-rollplays
 volumes:
-  volume-rollplays:
+  volume-rollplays-letsencrypt:
     external: true
