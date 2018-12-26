@@ -16,11 +16,9 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - volume-rollplays-letsencrypt:/etc/letsencrypt
+      - /srv/rollplays/etc/letsencrypt:/etc/letsencrypt
+      - /srv/rollplays/data/letsencrypt:/data/letsencrypt
 networks:
   default:
     external:
       name: network-rollplays
-volumes:
-  volume-rollplays-letsencrypt:
-    external: true
