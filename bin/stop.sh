@@ -1,9 +1,5 @@
 # close app
-docker-compose down -v
+docker-compose stop
 
 # close db
-docker kill mongodb
-docker rm mongodb
-
-# close network
-docker network rm network-rollplays
+docker stop mongodb

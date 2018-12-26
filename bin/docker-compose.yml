@@ -14,7 +14,12 @@ services:
     build: ../nginx/
     ports:
       - 80:80
+    volumes:
+      - volume-rollplays:/srv/rollplays
 networks:
   default:
     external:
       name: network-rollplays
+volumes:
+  volume-rollplays:
+    external: true

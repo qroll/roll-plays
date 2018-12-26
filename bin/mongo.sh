@@ -1,5 +1,3 @@
-docker network create network-rollplays
-
 # Create a container from the mongo image, 
 #  set it to auto start (--restart),
 #  run it as a daemon (-d),
