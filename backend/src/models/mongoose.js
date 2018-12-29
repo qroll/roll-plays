@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
 import bluebird from "bluebird";
+
+import Logger from "~/src/utils/Logger";
+
 mongoose.Promise = bluebird;
 
 import { DB } from "../config";
@@ -14,15 +17,16 @@ let options = {
 mongoose.connect(DB.URI, options);
 
 mongoose.connection.on("error", function (error) {
-    console.log("mongoose err", error);
+    Logger.error(error, "Error connecting to MongoDB");
+    throw error;
 });
 
 mongoose.connection.on("connected", function () {
-    console.log("Connection established to MongoDB");
+    Logger.info("Connection established to MongoDB");
 });
 
 mongoose.connection.on("reconnected", function () {
-    console.log("Reconnected to MongoDB");
+    Logger.info("Reconnected to MongoDB");
 });
 
 export default mongoose;

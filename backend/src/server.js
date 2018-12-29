@@ -1,16 +1,10 @@
-import "./config";
-import Logger from "./utils/Logger";
+import "~/src/config";
 
 import express from "express";
-import bodyParser from "body-parser";
-import cors from "cors";
-import connectMongoDB from "connect-mongodb-session";
-const MongoDBStore = connectMongoDB(session);
-import session from "express-session";
-import passport from "passport";
 
-import User from "./models/user";
-import { dbConnectionString } from "./config";
+import Logger from "~/src/utils/Logger";
+import User from "~/src/models/user";
+import { DB, SESSION, inEnv } from "~/src/config";
 
 //==============================================================
 
@@ -18,23 +12,29 @@ let app = express();
 
 //==============================================================
 
-// App sits behind a trusted reverse proxy such as nginx
-// The proxy should insert the IP address of the client in the 'X-Forward-For' header
-app.enable("trust proxy");
+// Uncomment this section to enable 'trust proxy':
+//   The app sits behind a trusted proxy such as nginx
+//   The proxy should insert the IP address of the client in the 'X-Forwarded-*' header
 
-// Alternative method that specifies the IP address(es) of your trusted proxy
-// app.set("trust proxy", "loopback");
+if (inEnv("production")) {
+    app.enable("trust proxy", 1);
+}
 
 //==============================================================
 
-// Enable CORS to skip the same-origin policy
+// Uncomment this section to enable CORS:
+//   Whitelist cross-origin domains that are allowed to access the app
+
+import cors from "cors";
+
 let corsOptions = {
     credentials: true,
-    origin: ["http://localhost:3000", "http://rollplays.me"],
+    origin: ["https://rollplays.me"],
     preflightContinue: true
 };
 
-if (process.env.NODE_ENV === "development") {
+// Enable CORS for any domain in development
+if (inEnv("development")) {
     corsOptions.origin = true;
 }
 
@@ -42,45 +42,54 @@ app.use(cors(corsOptions));
 
 //==============================================================
 
-// Set up logging
-// app.use(morgan("combined"));
+// Parse incoming request bodies and expose it on req.body
+import bodyParser from "body-parser";
 
-//==============================================================
-
-// Parse incoming request bodies and expose it on the req.body property
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 //==============================================================
 
-// Configure session options
+// Uncomment this section to enable session cookies:
+//   Store or access session data on req.session
+
+import session from "express-session";
+import connectMongoDB from "connect-mongodb-session";
+
+const MongoDBStore = connectMongoDB(session);
+
 let sessionOptions = {
-    store: new MongoDBStore({
-        uri: dbConnectionString,
-        collection: "sessions"
-    }),
-    secret: "keyboard cat",
+    cookie: {},
     resave: true,
     saveUninitialized: true,
-    cookie: {}
+    secret: SESSION.SIGNING_KEY,
+    store: new MongoDBStore({
+        uri: DB.URI,
+        collection: "sessions"
+    })
 };
 
-if (app.get("env") === "production") {
-    sessionOptions.cookie.secure = true; // serve secure cookies
+// Serve secure cookies (cookies are sent only over HTTPS)
+// Proxy must be trusted so that client connection can be detected as HTTPS
+if (inEnv("production")) {
+    sessionOptions.cookie.secure = true;
 }
 
 app.use(session(sessionOptions));
 
 //==============================================================
 
-// Authenticate the user and enable persistent login sessions
+// Uncomment this section to enable persistent login sessions:
+//   On subsequent requests, user info is accessed on req.user
+
+import passport from "passport";
+
+// Used to identify the authenticated user
 passport.serializeUser(function (user, cb) {
-    // console.log("serializeUser()");
     cb(null, user.id);
 });
 
 passport.deserializeUser(function (id, cb) {
-    // console.log("deserializeUser()");
     User.findById(id, (err, user) => {
         if (err) {
             return cb(err);
@@ -105,13 +114,9 @@ app.get("/", (req, res) => {
 
 //==============================================================
 
-import auth from "./api/auth";
-import game from "./api/game";
-import rank from "./api/rank";
+import router from "~/src/api/routes";
 
-app.use("/auth", auth);
-app.use("/game", game);
-app.use("/rank", rank);
+app.use("/", router);
 
 app.listen(9000, function () {
     Logger.info("Server listening on port 9000!")
