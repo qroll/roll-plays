@@ -1,9 +1,9 @@
 import "./config";
+import Logger from "./utils/Logger";
 
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-import morgan from "morgan";
 import connectMongoDB from "connect-mongodb-session";
 const MongoDBStore = connectMongoDB(session);
 import session from "express-session";
@@ -74,12 +74,12 @@ app.use(session(sessionOptions));
 //==============================================================
 
 // Authenticate the user and enable persistent login sessions
-passport.serializeUser(function(user, cb) {
+passport.serializeUser(function (user, cb) {
     // console.log("serializeUser()");
     cb(null, user.id);
 });
 
-passport.deserializeUser(function(id, cb) {
+passport.deserializeUser(function (id, cb) {
     // console.log("deserializeUser()");
     User.findById(id, (err, user) => {
         if (err) {
@@ -113,6 +113,6 @@ app.use("/auth", auth);
 app.use("/game", game);
 app.use("/rank", rank);
 
-app.listen(9000, function() {
-    console.log("Example app listening on port 9000!");
+app.listen(9000, function () {
+    Logger.info("Server listening on port 9000!")
 });
