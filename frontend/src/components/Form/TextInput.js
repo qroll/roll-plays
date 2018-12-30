@@ -8,6 +8,8 @@ export const Input = styled.input`
     border-bottom: 1px solid #e0e0e0;
     box-sizing: border-box;
     flex: 1 auto;
+    font-family: "Roboto";
+    font-size: 1rem;
     padding: 5px;
     outline: none;
     width: 100%;
@@ -37,7 +39,14 @@ class TextInput extends React.Component {
     render() {
         let { name, value, placeholder, readOnly } = this.props;
         return (
-            <Input type="text" id={`textfield-${name}`} value={value} placeholder={placeholder} onChange={this.handleInputChange} readOnly={readOnly} />
+            <Input
+                type="text"
+                id={`textfield-${name}`}
+                value={value}
+                placeholder={placeholder}
+                onChange={this.handleInputChange}
+                readOnly={readOnly}
+            />
         );
     }
 }
@@ -48,6 +57,6 @@ TextInput.propTypes = {
     placeholder: PropTypes.string,
     onChange: PropTypes.func,
     readOnly: PropTypes.bool
-}
+};
 
 export default TextInput;

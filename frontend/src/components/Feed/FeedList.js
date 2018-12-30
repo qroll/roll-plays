@@ -3,8 +3,8 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import markdown from "markdown-it";
 
-import { getContrastColor } from "../../util/color";
-import { displayTime } from "../../util/time";
+import { getContrastColor } from "src/utils/color";
+import { displayTime } from "src/utils/time";
 
 const md = markdown();
 
@@ -50,7 +50,7 @@ const PostDate = styled.div`
 `;
 
 const StyledFeedList = styled.div`
-    border: 1px solid #e0e0e0;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
     margin: 10px;
 `;
 
@@ -68,7 +68,9 @@ const PostTags = ({ game, tags = [] }) => {
     return (
         <div style={{ paddingBottom: "10px" }}>
             {game && <Tag color="#E34234">{game}</Tag>}
-            {tags.map((tag, index) => <Tag key={index}>{tag}</Tag>)}
+            {tags.map((tag, index) => (
+                <Tag key={index}>{tag}</Tag>
+            ))}
         </div>
     );
 };
@@ -87,7 +89,9 @@ const Post = ({ post }) => (
 
 const FeedList = ({ posts }) => (
     <StyledFeedList>
-        {posts.map(post => <Post key={post._id} post={post} />)}
+        {posts.map(post => (
+            <Post key={post._id} post={post} />
+        ))}
     </StyledFeedList>
 );
 
