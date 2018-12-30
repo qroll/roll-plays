@@ -4,7 +4,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 import RankingInfo from "./RankingInfo";
 
-import { callApi } from "../../util/callApi";
+import { callApi } from "src/utils/callApi";
 
 const remove = (list, index) => [
     ...list.slice(0, index),

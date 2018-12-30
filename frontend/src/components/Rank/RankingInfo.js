@@ -2,10 +2,10 @@ import React from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
 
-import { GuestOrUserSession } from "../Session";
-import Icon from "../Icon";
+import { GuestOrUserSession } from "src/components/Session";
+import Icon from "src/components/Icon";
 
-import { callApi } from "../../util/callApi";
+import { callApi } from "src/utils/callApi";
 
 const RankingName = styled.h1`
     font-family: "Roboto Condensed";

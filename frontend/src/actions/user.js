@@ -1,4 +1,4 @@
-import { callApi } from "../util/callApi";
+import { callApi } from "src/utils/callApi";
 
 export const checkUserSession = () => dispatch => {
   dispatch({

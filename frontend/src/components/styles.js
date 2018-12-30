@@ -1,0 +1,9 @@
+export const GRAY = {
+  LIGHTEST: "#EEEEEE",
+  LIGHTER: "#E0E0E0",
+  LIGHT: "#BDBDBD",
+  MEDIUM: "#9E9E9E",
+  DARK: "#757575",
+  DARKER: "#424242",
+  DARKEST: "#212121"
+};

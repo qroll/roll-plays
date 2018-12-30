@@ -1,13 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 
-import {
-    FormTextField
-} from "../Form";
-import { ErrorBar } from "../ErrorBar";
-import { Button } from "../Button";
+import { FormTextField } from "src/components/Form";
+import { ErrorBar } from "src/components/ErrorBar";
+import { Button } from "src/components/Button";
 
-import { callApi } from "../../util/callApi";
+import { callApi } from "src/utils/callApi";
 
 const AddRankBox = styled.div`
     display: flex;
@@ -77,8 +75,8 @@ class AddRank extends React.Component {
                 {this.state.submitting ? (
                     <Button disabled>Adding...</Button>
                 ) : (
-                        <Button onClick={this.handleOnClick}>Add</Button>
-                    )}
+                    <Button onClick={this.handleOnClick}>Add</Button>
+                )}
             </AddRankBox>
         );
     }

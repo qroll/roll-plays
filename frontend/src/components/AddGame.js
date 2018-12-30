@@ -4,10 +4,11 @@ import styled from "styled-components";
 import { FormCheckbox, FormDropdown, FormTextField } from "./Form";
 import { ErrorBar } from "./ErrorBar";
 import { Button } from "./Button";
-import { callApi } from "../util/callApi";
+import { callApi } from "src/utils/callApi";
 
 const AddGameBox = styled.div`
   background-color: #fff;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
   padding: 20px;
