@@ -3,8 +3,8 @@ import styled from "styled-components";
 
 import { Button } from "src/components/Button";
 import { GRAY } from "src/components/styles";
-import CustomTags from "./CustomTags";
-import GameDropdown from "./GameDropdown";
+import CustomTagInput from "./CustomTagInput";
+import GameTagInput from "./GameTagInput";
 
 const StyledFeedBox = styled.div`
     background-color: #fff;
@@ -67,11 +67,14 @@ class FeedBox extends React.Component {
                     placeholder="What's on your mind?"
                     onChange={this.handleOnPostChange}
                 />
-                <GameDropdown
+                <GameTagInput
                     selectedGames={games}
                     onGameChange={this.handleOnGameChange}
                 />
-                <CustomTags tags={tags} onTagChange={this.handleOnTagChange} />
+                <CustomTagInput
+                    tags={tags}
+                    onTagChange={this.handleOnTagChange}
+                />
                 <PostButton onClick={this.handleOnPostSubmit}>Post</PostButton>
             </StyledFeedBox>
         );

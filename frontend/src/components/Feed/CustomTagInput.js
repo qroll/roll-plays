@@ -2,8 +2,8 @@ import React from "react";
 import styled from "styled-components";
 
 import { TagIcon } from "src/components/Icons";
-import { GRAY } from "src/components/styles";
-import { getContrastColor } from "src/utils/color";
+
+import { TagContainer, Tag, TagInput } from "./Tags";
 
 const TagBar = styled.div`
     align-items: center;
@@ -11,44 +11,7 @@ const TagBar = styled.div`
     flex-direction: row;
 `;
 
-const Tags = styled.div`
-    align-items: center;
-    overflow-x: scroll;
-    display: flex;
-    flex: 1 auto;
-    flex-direction: row;
-    flex-wrap: wrap;
-`;
-
-const Tag = styled.span`
-    background-color: ${props => props.color || "#33516E"};
-    border-radius: 3px;
-    color: ${props => getContrastColor(props.color || "#33516E")};
-    cursor: default;
-    flex-shrink: 0;
-    font-size: 0.75em;
-    height: fit-content;
-    margin: 0 5px 5px 0;
-    max-width: calc(100% - 15px);
-    padding: 3px 5px;
-    word-break: break-word;
-`;
-
-const Input = styled.input`
-    background: none;
-    border: none;
-    flex: 1 auto;
-    font-family: "Roboto";
-    font-size: 0.75rem;
-    padding: 5px;
-    outline: none;
-
-    &::placeholder {
-        color: ${GRAY.LIGHT};
-    }
-`;
-
-class CustomTags extends React.Component {
+class CustomTagInput extends React.Component {
     state = {
         tagInput: ""
     };
@@ -57,7 +20,7 @@ class CustomTags extends React.Component {
         this.setState({ tagInput: e.target.value });
     };
 
-    handleOnEnter = e => {
+    handleOnKey = e => {
         let key = e.key;
         let input = this.state.tagInput;
         if (key === "Enter") {
@@ -77,22 +40,24 @@ class CustomTags extends React.Component {
         let { tags } = this.props;
         return (
             <TagBar>
-                <TagIcon style={{ alignSelf: "flex-start" }} />
-                <Tags>
+                <TagIcon
+                    style={{ alignSelf: "flex-start", paddingRight: "10px" }}
+                />
+                <TagContainer style={{ flex: "1 auto" }}>
                     {tags.map(tag => {
                         return <Tag key={tag}>{tag}</Tag>;
                     })}
-                    <Input
+                    <TagInput
                         type="text"
                         value={this.state.tagInput}
                         onChange={this.handleOnChange}
-                        onKeyDown={this.handleOnEnter}
+                        onKeyDown={this.handleOnKey}
                         placeholder={tags.length ? null : "Add a tag"}
                     />
-                </Tags>
+                </TagContainer>
             </TagBar>
         );
     }
 }
 
-export default CustomTags;
+export default CustomTagInput;
