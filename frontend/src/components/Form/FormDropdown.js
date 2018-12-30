@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import styled from "styled-components";
 
 import CreatableDropdown from "./CreatableDropdown";
 import Dropdown from "./Dropdown";
@@ -10,10 +9,6 @@ import FormControl from "./FormControl";
 class FormDropdown extends React.Component {
     render() {
         let { items, value, name, creatable, onChange } = this.props;
-        let selectedItem = items.find(item => item.value === value);
-        let displayLabel = selectedItem
-            ? selectedItem.label
-            : value;
 
         return (
             <FormControl>

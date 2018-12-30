@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import styled from "styled-components";
 import Autocomplete from "react-autocomplete";
 
 import { Input } from "./TextInput";
@@ -15,7 +14,7 @@ class Dropdown extends React.Component {
     }
 
     render() {
-        let { items, value, creatable, name } = this.props;
+        let { items, value, name } = this.props;
         let selectedItem = items.find(item => item.value === value);
         let displayLabel = selectedItem
             ? selectedItem.label

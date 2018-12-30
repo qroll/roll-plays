@@ -15,21 +15,21 @@ import { SessionChecker } from "./Session";
 let store = configureStore();
 
 class App extends Component {
-    render() {
-        return (
-            <Provider store={store}>
-                <SessionChecker>
-                    <Layout>
-                        <Route path="/" exact component={Main} />
-                        <Route path="/feed" component={Feed} />
-                        <Route path="/game" component={Game} />
-                        <Route path="/login" component={Login} />
-                        <Route path="/rank" component={RankPage} />
-                    </Layout>
-                </SessionChecker>
-            </Provider>
-        );
-    }
+  render() {
+    return (
+      <Provider store={store}>
+        <SessionChecker>
+          <Layout>
+            <Route path="/" exact component={Main} />
+            <Route path="/feed" component={Feed} />
+            <Route path="/game" component={Game} />
+            <Route path="/login" component={Login} />
+            <Route path="/rank" component={RankPage} />
+          </Layout>
+        </SessionChecker>
+      </Provider>
+    );
+  }
 }
 
 export default App;
