@@ -1,31 +1,25 @@
 import React from "react";
 import PropTypes from "prop-types";
-import styled from "styled-components";
 
-export const Checkbox = styled.div`
-  background-color: ${props => props.checked ? "#f07241" : "#ffffff"};
-  border: 1px solid #e0e0e0;
-  box-sizing: border-box;
-  content: "";
-  display: block;
-  height: 1em;
-  margin: 5px 0;
-  width: 1em;
-
-  &:hover {
-    border: 2px solid #ebebeb;
-  }
-`;
+import FormControl from './FormControl';
+import Label from './Label';
+import Checkbox from './Checkbox';
+import Required from './Required';
 
 class FormCheckbox extends React.Component {
-  handleInputChange = () => {
-    this.props.onChange(this.props.name, !this.props.isChecked);
-  };
-
   render() {
+    let { name, label, isChecked, readOnly, required, onChange } = this.props;
     return (
-      <Checkbox checked={this.props.isChecked} onClick={this.handleInputChange} />
-    )
+      <FormControl>
+        <Label htmlFor={`checkbox-${name}`}>{label}{required && <Required />}</Label>
+        <Checkbox
+          name={name}
+          isChecked={isChecked}
+          onChange={onChange}
+          readOnly={readOnly}
+        />
+      </FormControl>
+    );
   }
 }
 

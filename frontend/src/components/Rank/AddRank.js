@@ -2,9 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 import {
-    FormControl,
-    FormInputLabel,
-    FormTextInput
+    FormTextField
 } from "../Form";
 import { ErrorBar } from "../ErrorBar";
 import { Button } from "../Button";
@@ -62,26 +60,20 @@ class AddRank extends React.Component {
         return (
             <AddRankBox>
                 {this.state.error && <ErrorBar>{this.state.error}</ErrorBar>}
-                <FormControl>
-                    <FormInputLabel>Name</FormInputLabel>
-                    <FormTextInput
-                        type="text"
-                        name="name"
-                        value={this.state.form.name}
-                        onChange={this.handleInputChange}
-                        readOnly={this.state.submitting}
-                    />
-                </FormControl>
-                <FormControl>
-                    <FormInputLabel>Description</FormInputLabel>
-                    <FormTextInput
-                        type="text"
-                        name="description"
-                        value={this.state.form.description}
-                        onChange={this.handleInputChange}
-                        readOnly={this.state.submitting}
-                    />
-                </FormControl>
+                <FormTextField
+                    label="Name"
+                    name="name"
+                    value={this.state.form.name}
+                    onChange={this.handleInputChange}
+                    readOnly={this.state.submitting}
+                />
+                <FormTextField
+                    label="Description"
+                    name="description"
+                    value={this.state.form.description}
+                    onChange={this.handleInputChange}
+                    readOnly={this.state.submitting}
+                />
                 {this.state.submitting ? (
                     <Button disabled>Adding...</Button>
                 ) : (

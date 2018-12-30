@@ -2,11 +2,9 @@ import React from "react";
 import styled from "styled-components";
 
 import {
-    FormControl,
-    FormInputLabel,
-    FormTextInput,
     FormCheckbox,
     FormDropdown,
+    FormTextField
 } from "./Form";
 import { ErrorBar } from "./ErrorBar";
 import { Button } from "./Button";
@@ -87,57 +85,43 @@ class AddGame extends React.Component {
         return (
             <AddGameBox>
                 {this.state.error && <ErrorBar>{this.state.error}</ErrorBar>}
-                <FormControl>
-                    <FormInputLabel>App ID</FormInputLabel>
-                    <FormTextInput
-                        type="text"
-                        name="appID"
-                        value={this.state.form.appID}
-                        placeholder="App ID on Steam"
-                        onChange={this.handleOnAppIDChange}
-                        readOnly={this.state.submitting}
-                    />
-                </FormControl>
-                <FormControl>
-                    <FormInputLabel>Title</FormInputLabel>
-                    <FormTextInput
-                        type="text"
-                        name="title"
-                        value={this.state.form.title}
-                        onChange={this.handleInputChange}
-                        readOnly={this.state.submitting}
-                    />
-                </FormControl>
-                <FormControl>
-                    <FormInputLabel>Release date</FormInputLabel>
-                    <FormTextInput
-                        type="text"
-                        name="releaseDate"
-                        value={this.state.form.releaseDate}
-                        onChange={this.handleInputChange}
-                        readOnly={this.state.submitting}
-                    />
-                </FormControl>
-                <FormControl>
-                    <FormInputLabel>In library</FormInputLabel>
-                    <FormCheckbox name="inLibrary"
-                        isChecked={this.state.form.inLibrary}
-                        onChange={this.handleInputChange} />
-                </FormControl>
-                <FormControl>
-                    <FormInputLabel>Status</FormInputLabel>
-                    <FormDropdown
-                        items={[
-                            { value: "completed", label: "Completed" },
-                            { value: "played", label: "Played" },
-                            { value: "unplayed", label: "Unplayed" }
-                        ]}
-                        name="status"
-                        value={this.state.form.status}
-                        onChange={this.handleInputChange}
-                        onSelect={this.handleOnStatusChange}
-                    />
-                </FormControl>
+                <FormTextField
+                    label="App ID"
+                    name="appID"
+                    value={this.state.form.appID}
+                    placeholder="Paste a link to the Steam store page"
+                    onChange={this.handleOnAppIDChange}
+                    readOnly={this.state.submitting}
+                />
+                <FormTextField
+                    label="Title"
+                    name="title"
+                    value={this.state.form.title}
+                    onChange={this.handleInputChange}
+                    readOnly={this.state.submitting}
+                />
+                <FormTextField
+                    label="Release date"
+                    name="releaseDate"
+                    value={this.state.form.releaseDate}
+                    onChange={this.handleInputChange}
+                    readOnly={this.state.submitting}
+                />
+                <FormCheckbox
+                    label="In library"
+                    name="inLibrary"
+                    isChecked={this.state.form.inLibrary}
+                    onChange={this.handleInputChange} />
+                <FormDropdown
+                    items={[
+                        { value: "completed", label: "Completed" },
+                        { value: "played", label: "Played" },
+                        { value: "backlog", label: "Backlog" }
+                    ]}
+                    name="status"
+                    value={this.state.form.status}
+                    onChange={this.handleInputChange}
+                    creatable />
                 {this.state.submitting ? (
                     <Button disabled>Adding...</Button>
                 ) : (

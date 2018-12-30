@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
-const TextInput = styled.input`
+export const Input = styled.input`
     background: none;
     border: none;
     border-bottom: 1px solid #e0e0e0;
@@ -29,22 +29,25 @@ const TextInput = styled.input`
     }
 `;
 
-class FormTextInput extends React.Component {
+class TextInput extends React.Component {
     handleInputChange = e => {
         this.props.onChange(this.props.name, e.target.value);
     };
 
     render() {
+        let { name, value, placeholder, readOnly } = this.props;
         return (
-            <TextInput value={this.props.value} onChange={this.handleInputChange} />
+            <Input type="text" id={`textfield-${name}`} value={value} placeholder={placeholder} onChange={this.handleInputChange} readOnly={readOnly} />
         );
     }
 }
 
-FormTextInput.propTypes = {
+TextInput.propTypes = {
     name: PropTypes.string,
     value: PropTypes.string,
-    onChange: PropTypes.func
+    placeholder: PropTypes.string,
+    onChange: PropTypes.func,
+    readOnly: PropTypes.bool
 }
 
-export default FormTextInput;
+export default TextInput;

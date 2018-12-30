@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-const FormControl = styled.label`
+const FormControl = styled.div`
     align-items: left;
     display: flex;
     flex-direction: column;
