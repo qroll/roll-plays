@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import Editor from "./Editor";
 
-import { Button } from "../Form";
+import { Button } from "../Button";
 
 const TextBox = styled.div`
     background-color: #fff;

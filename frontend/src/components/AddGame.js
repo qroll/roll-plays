@@ -3,15 +3,13 @@ import styled from "styled-components";
 
 import {
     FormControl,
-    Label,
-    TextInput,
-    Checkbox,
-    Toggle,
-    Button,
-    Select,
-    Error
+    FormInputLabel,
+    FormTextInput,
+    FormCheckbox,
+    FormDropdown,
 } from "./Form";
-
+import { ErrorBar } from "./ErrorBar";
+import { Button } from "./Button";
 import { callApi } from "../util/callApi";
 
 const AddGameBox = styled.div`
@@ -36,10 +34,9 @@ class AddGame extends React.Component {
         form: defaultFormFields
     };
 
-    handleOnAppIDChange = e => {
-        let input = e.target.value;
+    handleOnAppIDChange = (name, input) => {
         // example url: http://store.steampowered.com/app/386620/Cook_Serve_Delicious_2/
-        let urlRegex = /(?:^http:\/\/)?store\.steampowered\.com\/app\/([0-9]+)(\/\.+)?/;
+        let urlRegex = /(?:^https?:\/\/)?(?:www)?store\.steampowered\.com\/app\/([0-9]+)(\/\.+)?/;
         let result = urlRegex.exec(input);
 
         let value = result ? result[1] : input;
@@ -54,25 +51,12 @@ class AddGame extends React.Component {
         });
     };
 
-    handleInputChange = e => {
-        e.persist();
-
-        if (e.target.type === "checkbox") {
-            this.setState(prevState => {
-                return {
-                    form: {
-                        ...prevState.form,
-                        [e.target.name]: e.target.checked
-                    }
-                };
-            });
-        } else {
-            this.setState(prevState => {
-                return {
-                    form: { ...prevState.form, [e.target.name]: e.target.value }
-                };
-            });
-        }
+    handleInputChange = (name, value) => {
+        this.setState(prevState => {
+            return {
+                form: { ...prevState.form, [name]: value }
+            };
+        });
     };
 
     handleOnStatusChange = (value, item) => {
@@ -102,10 +86,10 @@ class AddGame extends React.Component {
     render() {
         return (
             <AddGameBox>
-                {this.state.error && <Error>{this.state.error}</Error>}
+                {this.state.error && <ErrorBar>{this.state.error}</ErrorBar>}
                 <FormControl>
-                    <Label>App ID</Label>
-                    <TextInput
+                    <FormInputLabel>App ID</FormInputLabel>
+                    <FormTextInput
                         type="text"
                         name="appID"
                         value={this.state.form.appID}
@@ -115,8 +99,8 @@ class AddGame extends React.Component {
                     />
                 </FormControl>
                 <FormControl>
-                    <Label>Title</Label>
-                    <TextInput
+                    <FormInputLabel>Title</FormInputLabel>
+                    <FormTextInput
                         type="text"
                         name="title"
                         value={this.state.form.title}
@@ -125,8 +109,8 @@ class AddGame extends React.Component {
                     />
                 </FormControl>
                 <FormControl>
-                    <Label>Release date</Label>
-                    <TextInput
+                    <FormInputLabel>Release date</FormInputLabel>
+                    <FormTextInput
                         type="text"
                         name="releaseDate"
                         value={this.state.form.releaseDate}
@@ -135,19 +119,14 @@ class AddGame extends React.Component {
                     />
                 </FormControl>
                 <FormControl>
-                    <Toggle>
-                        <Checkbox
-                            type="checkbox"
-                            name="inLibrary"
-                            checked={this.state.form.inLibrary}
-                            onChange={this.handleInputChange}
-                        />
-                        <Label>In library</Label>
-                    </Toggle>
+                    <FormInputLabel>In library</FormInputLabel>
+                    <FormCheckbox name="inLibrary"
+                        isChecked={this.state.form.inLibrary}
+                        onChange={this.handleInputChange} />
                 </FormControl>
                 <FormControl>
-                    <Label>Status</Label>
-                    <Select
+                    <FormInputLabel>Status</FormInputLabel>
+                    <FormDropdown
                         items={[
                             { value: "completed", label: "Completed" },
                             { value: "played", label: "Played" },
@@ -162,8 +141,8 @@ class AddGame extends React.Component {
                 {this.state.submitting ? (
                     <Button disabled>Adding...</Button>
                 ) : (
-                    <Button onClick={this.handleOnClick}>Add</Button>
-                )}
+                        <Button onClick={this.handleOnClick}>Add</Button>
+                    )}
             </AddGameBox>
         );
     }

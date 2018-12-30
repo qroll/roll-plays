@@ -3,7 +3,7 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import styled from "styled-components";
 
-import { Button } from "./Form";
+import { Button } from "./Button";
 
 import * as actions from "../actions/user";
 
@@ -119,10 +119,10 @@ class Login extends React.Component {
                     {this.state.submitting ? (
                         <LoginButton disabled>Logging in...</LoginButton>
                     ) : (
-                        <LoginButton onClick={this.handleOnSubmit}>
-                            Login
+                            <LoginButton onClick={this.handleOnSubmit}>
+                                Login
                         </LoginButton>
-                    )}
+                        )}
                 </LoginBox>
             </LoginPage>
         );

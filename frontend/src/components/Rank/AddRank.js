@@ -1,7 +1,13 @@
 import React from "react";
 import styled from "styled-components";
 
-import { FormControl, Label, TextInput, Button, Error } from "../Form";
+import {
+    FormControl,
+    FormInputLabel,
+    FormTextInput
+} from "../Form";
+import { ErrorBar } from "../ErrorBar";
+import { Button } from "../Button";
 
 import { callApi } from "../../util/callApi";
 
@@ -55,10 +61,10 @@ class AddRank extends React.Component {
     render() {
         return (
             <AddRankBox>
-                {this.state.error && <Error>{this.state.error}</Error>}
+                {this.state.error && <ErrorBar>{this.state.error}</ErrorBar>}
                 <FormControl>
-                    <Label>Name</Label>
-                    <TextInput
+                    <FormInputLabel>Name</FormInputLabel>
+                    <FormTextInput
                         type="text"
                         name="name"
                         value={this.state.form.name}
@@ -67,8 +73,8 @@ class AddRank extends React.Component {
                     />
                 </FormControl>
                 <FormControl>
-                    <Label>Description</Label>
-                    <TextInput
+                    <FormInputLabel>Description</FormInputLabel>
+                    <FormTextInput
                         type="text"
                         name="description"
                         value={this.state.form.description}
@@ -79,8 +85,8 @@ class AddRank extends React.Component {
                 {this.state.submitting ? (
                     <Button disabled>Adding...</Button>
                 ) : (
-                    <Button onClick={this.handleOnClick}>Add</Button>
-                )}
+                        <Button onClick={this.handleOnClick}>Add</Button>
+                    )}
             </AddRankBox>
         );
     }
