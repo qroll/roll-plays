@@ -26,6 +26,7 @@
     "devDependencies": {
         "babel-cli": "^6.26.0",
         "babel-plugin-module-resolver": "^3.1.1",
+        "babel-plugin-transform-object-rest-spread": "^6.26.0",
         "babel-preset-env": "^1.6.1",
         "jest": "^22.4.3",
         "migrate": "^1.6.2",
