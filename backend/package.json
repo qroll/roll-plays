@@ -14,23 +14,26 @@
         "express-session": "^1.15.6",
         "moment": "^2.22.1",
         "mongoose": "^5.4.1",
-        "morgan": "^1.9.0",
         "passport": "^0.4.0",
         "passport-local": "^1.0.0"
     },
     "scripts": {
-        "start": "babel-node ./src/server.js",
-        "dev": "nodemon ./src/server.js --exec babel-node",
+        "start:dev": "nodemon ./src/server.js --exec babel-node",
+        "start:prod": "npm run clean && npm run build && npm run start",
+        "clean": "rm -rf build && mkdir build",
+        "build": "babel --out-dir ./build ./src",
+        "start": "node ./build/server.js",
         "test": "jest --watch"
     },
     "devDependencies": {
         "babel-cli": "^6.26.0",
         "babel-plugin-module-resolver": "^3.1.1",
         "babel-plugin-transform-object-rest-spread": "^6.26.0",
-        "babel-preset-env": "^1.6.1",
+        "babel-plugin-transform-runtime": "^6.23.0",
+        "babel-preset-env": "^1.7.0",
         "jest": "^22.4.3",
         "migrate": "^1.6.2",
-        "nodemon": "^1.17.3"
+        "nodemon": "^1.18.9"
     },
     "babel": {
         "presets": [

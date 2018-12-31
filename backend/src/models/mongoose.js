@@ -13,6 +13,7 @@ let options = {
     socketTimeoutMS: 30000,
     reconnectTries: 3,
     useNewUrlParser: true,
+    useCreateIndex: true,
     bufferCommands: false,
     bufferMaxEntries: 0
 };
