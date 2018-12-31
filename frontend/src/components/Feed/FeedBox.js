@@ -16,7 +16,7 @@ const StyledFeedBox = styled.div`
     padding: 10px;
 `;
 
-const PostButton = Button.extend`
+const PostButton = styled(Button)`
     align-self: flex-end;
 `;
 

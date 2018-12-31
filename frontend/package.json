@@ -5,18 +5,18 @@
     "dependencies": {
         "axios": "^0.17.1",
         "markdown-it": "^8.4.2",
-        "moment": "^2.20.1",
-        "react": "^16.2.0",
-        "react-autocomplete": "^1.7.2",
+        "moment": "^2.23.0",
+        "react": "^16.7.0",
+        "react-autocomplete": "^1.8.1",
         "react-beautiful-dnd": "^3.0.0",
-        "react-dom": "^16.2.0",
-        "react-redux": "^5.0.6",
-        "react-router-dom": "^4.2.2",
-        "react-scripts": "1.0.17",
+        "react-dom": "^16.7.0",
+        "react-redux": "^5.1.1",
+        "react-router-dom": "^4.3.1",
+        "react-scripts": "^1.1.5",
         "redux": "^3.7.2",
-        "redux-thunk": "^2.2.0",
+        "redux-thunk": "^2.3.0",
         "stringify-entities": "^1.3.2",
-        "styled-components": "^3.0.2"
+        "styled-components": "^3.4.10"
     },
     "scripts": {
         "start": "react-scripts start",

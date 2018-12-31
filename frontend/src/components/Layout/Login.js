@@ -1,8 +1,9 @@
 import React from "react";
+import styled from "styled-components";
 
 import { AppLink } from "../Common";
 
-const StyledLink = AppLink.extend`
+const StyledLink = styled(AppLink)`
     background-color: rgba(0, 0, 0, 0.1);
     border-radius: 3px;
     color: #fff;

@@ -24,7 +24,7 @@ const Background = styled.img`
     object-fit: cover;
 `;
 
-const Attribution = ALink.extend`
+const Attribution = styled(ALink)`
     color: #333333;
     font-size: 0.8em;
     padding: 5px;

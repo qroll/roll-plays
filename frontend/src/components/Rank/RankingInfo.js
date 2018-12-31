@@ -21,16 +21,17 @@ const RankingDescription = styled.p`
     margin: 5px 0;
 `;
 
-const EditableRankingName = RankingName.withComponent("input").extend`
-border: none;
-display: block;
-outline: none;
+const EditableRankingName = styled(RankingName.withComponent("input"))`
+    border: none;
+    display: block;
+    outline: none;
 `;
-const EditableRankingDescription = RankingDescription.withComponent("input")
-    .extend`
-border: none;
-display: block;
-outline: none;
+const EditableRankingDescription = styled(
+    RankingDescription.withComponent("input")
+)`
+    border: none;
+    display: block;
+    outline: none;
 `;
 
 class EditableRankingInfo extends React.Component {

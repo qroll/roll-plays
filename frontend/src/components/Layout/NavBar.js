@@ -26,6 +26,6 @@ export const StyledLink = styled(Link)`
     }
 `;
 
-export const StyledNavText = StyledLink.withComponent("span").extend`
-    cursor: pointer
+export const StyledNavText = styled(StyledLink.withComponent("span"))`
+    cursor: pointer;
 `;

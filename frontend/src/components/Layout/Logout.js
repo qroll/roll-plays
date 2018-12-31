@@ -1,12 +1,13 @@
 import React from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import styled from "styled-components";
 
 import { TextLink } from "../Common";
 
 import * as actions from "../../actions/user";
 
-const StyledLink = TextLink.extend`
+const StyledLink = styled(TextLink)`
     background-color: rgba(0, 0, 0, 0.1);
     border-radius: 3px;
     color: #fff;
@@ -31,6 +32,9 @@ const mapDispatchToProps = dispatch => ({
     actions: bindActionCreators(actions, dispatch)
 });
 
-const LogoutContainer = connect(null, mapDispatchToProps)(Logout);
+const LogoutContainer = connect(
+    null,
+    mapDispatchToProps
+)(Logout);
 
 export default LogoutContainer;
