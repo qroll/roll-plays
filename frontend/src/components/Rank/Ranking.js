@@ -99,7 +99,7 @@ class Ranking extends React.Component {
             this.setState({ rankedGames });
         });
         callApi("/game").then(res => {
-            let { data } = res;
+            let { data } = res.data;
             let games = {};
             data.games.forEach(game => (games[game._id] = game));
             this.setState({ games });
