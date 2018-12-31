@@ -5,6 +5,7 @@ import express from "express";
 import Logger from "~/src/utils/Logger";
 import User from "~/src/models/user";
 import { DB, SESSION, inEnv } from "~/src/config";
+import { errorBuilder } from "~/src/utils/ResponseBuilder";
 
 //==============================================================
 
@@ -85,11 +86,11 @@ app.use(session(sessionOptions));
 import passport from "passport";
 
 // Used to identify the authenticated user
-passport.serializeUser(function (user, cb) {
+passport.serializeUser(function(user, cb) {
     cb(null, user.id);
 });
 
-passport.deserializeUser(function (id, cb) {
+passport.deserializeUser(function(id, cb) {
     User.findById(id, (err, user) => {
         if (err) {
             return cb(err);
@@ -118,6 +119,20 @@ import router from "~/src/api/routes";
 
 app.use("/", router);
 
-app.listen(9000, function () {
-    Logger.info("Server listening on port 9000!")
+app.use(function(err, req, res, next) {
+    let errorInfo = errorBuilder({
+        error: err
+    });
+
+    Logger.error({ error: errorInfo.error, message: errorInfo.message });
+
+    res.status(errorInfo.status).json({
+        code: errorInfo.code,
+        message: errorInfo.message,
+        error: errorInfo.error
+    });
+});
+
+app.listen(9000, function() {
+    Logger.info("Server listening on port 9000!");
 });

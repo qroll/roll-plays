@@ -1,23 +1,23 @@
 import Game from "~/src/models/game";
+import BaseController from "~/src/utils/BaseController";
 
-class GameController {
+class GameController extends BaseController {
     async retrieveGames(req, res) {
         try {
-            let games = await Game.find();
-            res.json({ games });
+            let games = await Game.find().exec();
+            this.success(res, { games });
         } catch (err) {
-            res.sendStatus(500);
+            this.failure(res, err);
         }
     }
 
     async createGame(req, res) {
-        let { game } = req.body;
-
         try {
+            let { game } = req.body;
             let createdGame = await Game.create(game);
-            res.json(createdGame);
+            this.success(res, { createdGame });
         } catch (err) {
-            res.sendStatus(500);
+            this.failure(res, err);
         }
     }
 }

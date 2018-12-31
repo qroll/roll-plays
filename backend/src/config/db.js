@@ -4,11 +4,9 @@ const DB_NAME = process.env.DB_NAME || "rollplays";
 
 let dbConnectionUri = "mongodb://";
 dbConnectionUri += DB_HOST;
-if (DB_PORT) {
-  dbConnectionUri += ":" + DB_PORT;
-}
+dbConnectionUri += ":" + DB_PORT;
 dbConnectionUri += "/" + DB_NAME;
 
 export const DB = {
-  URI: dbConnectionUri
-}
+    URI: dbConnectionUri
+};

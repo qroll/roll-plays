@@ -5,8 +5,12 @@ import GameController from "./controller";
 const router = express.Router();
 const controller = new GameController();
 
-router.get("/", controller.retrieveGames);
+router.get("/", (req, res) => {
+    controller.retrieveGames(req, res);
+});
 
-router.post("/", controller.createGame);
+router.post("/", (req, res) => {
+    controller.createGame(req, res);
+});
 
 export default router;

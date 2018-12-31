@@ -3,7 +3,7 @@ import Rank from "~/src/models/rank";
 class RankController {
     async retrieveRanks(req, res) {
         try {
-            let ranks = await Rank.find();
+            let ranks = await Rank.find().exec();
             res.json({ ranks });
         } catch (err) {
             res.sendStatus(500);

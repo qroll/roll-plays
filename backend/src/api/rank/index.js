@@ -5,10 +5,16 @@ import RankController from "./controller";
 const router = express.Router();
 const controller = new RankController();
 
-router.get("/", controller.retrieveRanks);
+router.get("/", (req, res) => {
+    controller.retrieveRanks(req, res);
+});
 
-router.post("/", controller.createRank);
+router.post("/", (req, res) => {
+    controller.createRank(req, res);
+});
 
-router.put("/:id", controller.updateRankById);
+router.put("/:id", (req, res) => {
+    controller.updateRankById(req, res);
+});
 
 export default router;
