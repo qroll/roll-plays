@@ -25,7 +25,7 @@ module.exports.up = function(next) {
 };
 
 module.exports.down = function(next) {
-    Rank.deleteMany({})
+    return Rank.deleteMany({})
         .exec()
         .then(() => next());
 };

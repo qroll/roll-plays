@@ -1,21 +1,47 @@
-'use strict'
+"use strict";
+
+import request from "request-promise";
 
 import Game from "~/src/models/game";
+import { STEAM_API } from "~/src/config";
 
 const games = [
-  { title: "Portal", inLibrary: true, status: "completed" },
-  { title: "The Witness", inLibrary: true, status: "completed" },
-  { title: "Prey (2017)", inLibrary: true, status: "completed" },
-  { title: "Gunpoint", inLibrary: true, status: "completed" }
+    { title: "Demo Game 1", inLibrary: true, status: "completed" },
+    { title: "Demo Game 2", inLibrary: true, status: "completed" },
+    { title: "Demo Game 3", inLibrary: true, status: "completed" },
+    { title: "Demo Game 4", inLibrary: true, status: "completed" }
 ];
 
-module.exports.up = function (next) {
-  return Game.create(games)
-    .then(() => next());
-}
+module.exports.up = async function(next) {
+    await Game.create(games);
 
-module.exports.down = function (next) {
-  Game.deleteMany({})
-    .exec()
-    .then(() => next());
-}
+    const options = {
+        json: true
+    };
+    let response = await request.get(
+        `http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=${
+            STEAM_API.API_KEY
+        }&steamid=${
+            STEAM_API.USER_ID
+        }&format=json&include_appinfo=1&include_played_free_games=1`,
+        options
+    );
+
+    let steamLibrary = response.response.games.map(game => {
+        return {
+            appId: game.appid,
+            title: game.name,
+            inLibrary: true
+        };
+    });
+
+    await Game.create(steamLibrary);
+
+    next();
+};
+
+module.exports.down = function(next) {
+    return Game.deleteMany({})
+        .exec()
+        .then(() => next());
+};
