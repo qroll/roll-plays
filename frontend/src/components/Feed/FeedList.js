@@ -4,18 +4,22 @@ import { Link } from "react-router-dom";
 
 import { getContrastColor } from "src/utils/color";
 import { displayTime } from "src/utils/time";
+import { callApi } from "src/utils/callApi";
 
-const PostBox = styled.div`
-    background-color: #fff;
+import List from "src/components/Container/List";
+import ListItem from "src/components/Container/ListItem";
+import { WHITE, ACCENT } from "src/components/styles";
+
+const StyledFeedList = styled(List)`
+    margin: 10px;
+`;
+
+const PostBox = styled(ListItem)`
     padding: 15px;
     overflow-wrap: break-word;
 
-    &:not(:last-of-type) {
-        border-bottom: 1px solid #e0e0e0;
-    }
-
     &:hover {
-        background-color: #fafafa;
+        background-color: ${WHITE};
     }
 `;
 
@@ -46,15 +50,10 @@ const PostDate = styled.div`
     display: inline-block;
 `;
 
-const StyledFeedList = styled.div`
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-    margin: 10px;
-`;
-
 const Tag = styled.span`
-    background-color: ${props => props.color || "#33516E"};
+    background-color: ${props => props.color || ACCENT.SECONDARY};
     border-radius: 3px;
-    color: ${props => getContrastColor(props.color || "#33516E")};
+    color: ${props => getContrastColor(props.color || ACCENT.SECONDARY)};
     cursor: default;
     font-size: 0.75em;
     margin-right: 5px;
@@ -65,10 +64,12 @@ const PostTags = ({ games = [], tags = [] }) => {
     return (
         <div style={{ paddingBottom: "10px" }}>
             {games.map(game => (
-                <Tag color="#E34234">{game}</Tag>
+                <Tag key={game.title} color={ACCENT.PRIMARY}>
+                    {game.title}
+                </Tag>
             ))}
-            {tags.map((tag, index) => (
-                <Tag key={index}>{tag}</Tag>
+            {tags.map(tag => (
+                <Tag key={tag}>{tag}</Tag>
             ))}
         </div>
     );
@@ -77,7 +78,7 @@ const PostTags = ({ games = [], tags = [] }) => {
 const Post = ({ post }) => (
     <PostBox>
         <PostBody>{post.body}</PostBody>
-        <PostTags game={post.games} tags={post.tags} />
+        <PostTags games={post.games} tags={post.tags} />
         <PostFooter>
             <Link to="/">
                 <PostDate>{displayTime(post.date)}</PostDate>
@@ -86,12 +87,28 @@ const Post = ({ post }) => (
     </PostBox>
 );
 
-const FeedList = ({ posts }) => (
-    <StyledFeedList>
-        {posts.map(post => (
-            <Post key={post._id} post={post} />
-        ))}
-    </StyledFeedList>
-);
+class FeedList extends React.Component {
+    state = {
+        posts: []
+    };
+
+    componentDidMount() {
+        callApi("/post").then(res => {
+            let { data } = res.data;
+            this.setState({ posts: data });
+        });
+    }
+
+    render() {
+        let { posts } = this.state;
+        return (
+            <StyledFeedList>
+                {posts.map(post => (
+                    <Post key={post._id} post={post} />
+                ))}
+            </StyledFeedList>
+        );
+    }
+}
 
 export default FeedList;

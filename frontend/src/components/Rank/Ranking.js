@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 import RankingInfo from "./RankingInfo";
+import { GRAY, ACCENT, WHITE } from "src/components/styles";
 
 import { callApi } from "src/utils/callApi";
 
@@ -24,16 +25,21 @@ const reorder = (list, src, dst) => {
     return result;
 };
 
+const RankCategory = styled.div`
+    margin: auto;
+    max-width: 460px;
+`;
+
 const Item = styled.div`
-    background-color: #fafafa;
-    border: 1px solid #ebebeb;
+    background-color: ${WHITE};
+    border: 1px solid ${GRAY.LIGHTER};
     border-radius: 3px;
     cursor: default;
     margin: 10px;
 `;
 
 const ItemRank = styled.div`
-    background-color: #f07241;
+    background-color: ${ACCENT.PRIMARY_MUTED};
     color: #ffffff;
     display: inline-block;
     font-family: "Roboto Condensed";
@@ -69,7 +75,7 @@ const DraggableRankItem = ({ rank, game = {} }) => (
 );
 
 const RankingList = ({ ranking, games, onDragEnd }) => (
-    <div>
+    <RankCategory>
         <RankingInfo name={ranking.name} description={ranking.description} />
         <Droppable droppableId={ranking._id}>
             {provided => (
@@ -85,7 +91,7 @@ const RankingList = ({ ranking, games, onDragEnd }) => (
                 </div>
             )}
         </Droppable>
-    </div>
+    </RankCategory>
 );
 
 class Ranking extends React.Component {
@@ -99,9 +105,8 @@ class Ranking extends React.Component {
             this.setState({ rankedGames });
         });
         callApi("/game").then(res => {
-            let { data } = res.data;
             let games = {};
-            data.games.forEach(game => (games[game._id] = game));
+            res.data.data.forEach(game => (games[game._id] = game));
             this.setState({ games });
         });
     }

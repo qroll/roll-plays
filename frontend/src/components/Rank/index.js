@@ -1,25 +1,19 @@
 import React from "react";
-import styled from "styled-components";
 
+import Page from "src/components/Container/Page";
 import { UserSession } from "../Session";
 import AddRank from "./AddRank";
 import Ranking from "./Ranking";
 
-const RankPage = styled.div`
-    flex: 1;
-    margin: 10px auto;
-    max-width: 500px;
-`;
-
 class Rank extends React.Component {
     render() {
         return (
-            <RankPage>
+            <Page>
                 <UserSession>
                     <AddRank />
                 </UserSession>
                 <Ranking />
-            </RankPage>
+            </Page>
         );
     }
 }

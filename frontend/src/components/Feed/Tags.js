@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { GRAY } from "src/components/styles";
+import { GRAY, ACCENT } from "src/components/styles";
 import { getContrastColor } from "src/utils/color";
 
 export const TagContainer = styled.div`
@@ -11,9 +11,9 @@ export const TagContainer = styled.div`
 `;
 
 export const Tag = styled.span`
-    background-color: ${props => props.color || "#33516E"};
+    background-color: ${props => props.color || ACCENT.SECONDARY};
     border-radius: 3px;
-    color: ${props => getContrastColor(props.color || "#33516E")};
+    color: ${props => getContrastColor(props.color || ACCENT.SECONDARY)};
     cursor: default;
     flex-shrink: 0;
     font-size: 0.75em;

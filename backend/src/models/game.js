@@ -9,7 +9,7 @@ let GameSchema = new Schema(
         inLibrary: { type: Boolean, required: true },
         status: {
             type: String,
-            required: true,
+            required: false,
             enum: ["completed", "played", "unplayed"]
         }
     },

@@ -13,4 +13,8 @@ router.post("/", (req, res) => {
     controller.createGame(req, res);
 });
 
+router.get("/activity", (req, res) => {
+    controller.retrieveActivity(req, res);
+});
+
 export default router;

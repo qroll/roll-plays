@@ -6,6 +6,7 @@ import Autocomplete from "react-autocomplete";
 import { callApi } from "src/utils/callApi";
 
 import { ControllerIcon } from "src/components/Icons";
+import { GRAY, WHITE, ACCENT } from "src/components/styles";
 
 import { TagContainer, Tag, TagInput } from "./Tags";
 
@@ -34,7 +35,7 @@ const ComboBox = props => {
                 <div
                     key={game._id}
                     style={{
-                        backgroundColor: isHighlighted ? "#e0e0e0" : "#ffffff",
+                        backgroundColor: isHighlighted ? GRAY.LIGHTER : WHITE,
                         padding: "3px",
                         fontSize: "1em"
                     }}
@@ -89,8 +90,8 @@ class GameTagInput extends React.Component {
 
     componentDidMount() {
         callApi("/game").then(res => {
-            let { data } = res.data;
-            this.setState({ games: this.normalize(data.games) });
+            let games = res.data.data;
+            this.setState({ games: this.normalize(games) });
         });
     }
 
@@ -133,7 +134,7 @@ class GameTagInput extends React.Component {
                 <TagContainer style={{ flex: "1 auto" }}>
                     {selectedGames.map(game => {
                         return (
-                            <Tag color="#E34234" key={game}>
+                            <Tag color={ACCENT.PRIMARY} key={game}>
                                 {games[game].title}
                             </Tag>
                         );

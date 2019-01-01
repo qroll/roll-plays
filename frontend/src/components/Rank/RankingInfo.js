@@ -3,9 +3,10 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 
 import { GuestOrUserSession } from "src/components/Session";
-import Icon from "src/components/Icon";
 
 import { callApi } from "src/utils/callApi";
+import { DotsHorizontalIcon } from "../Icons";
+import { GRAY } from "src/components/styles";
 
 const RankingName = styled.h1`
     font-family: "Roboto Condensed";
@@ -72,10 +73,7 @@ class EditableRankingInfo extends React.Component {
                 ) : (
                     <SimpleRankingInfo {...this.props} />
                 )}
-                <Icon
-                    name="icon-dots-horizontal"
-                    onClick={this.handleOnToggle}
-                />
+                <DotsHorizontalIcon color={GRAY.DARKEST} />
             </div>
         );
     }

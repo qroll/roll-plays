@@ -2,10 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
+import { GRAY, ACCENT } from "src/components/styles";
+
 export const Input = styled.input`
     background: none;
     border: none;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid ${GRAY.LIGHTER};
     box-sizing: border-box;
     flex: 1 auto;
     font-family: "Roboto";
@@ -15,18 +17,18 @@ export const Input = styled.input`
     width: 100%;
 
     &::placeholder {
-        color: #e0e0e0;
+        color: ${GRAY.LIGHTER};
     }
 
     &:hover {
         border: none;
-        border-bottom: 2px solid #ebebeb;
+        border-bottom: 2px solid ${GRAY.LIGHTER};
         margin-bottom: -1px;
     }
 
     &:focus {
         border: none;
-        border-bottom: 2px solid #f07241;
+        border-bottom: 2px solid ${ACCENT.PRIMARY};
         margin-bottom: -1px;
     }
 `;

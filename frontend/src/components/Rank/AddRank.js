@@ -4,13 +4,15 @@ import styled from "styled-components";
 import { FormTextField } from "src/components/Form";
 import { ErrorBar } from "src/components/ErrorBar";
 import { Button } from "src/components/Button";
+import Card from "src/components/Container/Card";
 
 import { callApi } from "src/utils/callApi";
 
-const AddRankBox = styled.div`
+const AddRankBox = styled(Card)`
     display: flex;
     flex-direction: column;
-    margin: 10px;
+    margin: 20px;
+    max-width: 500px;
     padding: 20px;
 `;
 

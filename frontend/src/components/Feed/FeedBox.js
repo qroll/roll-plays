@@ -4,17 +4,15 @@ import styled from "styled-components";
 import { callApi } from "src/utils/callApi";
 
 import { Button } from "src/components/Button";
+import Card from "src/components/Container/Card";
 import { GRAY } from "src/components/styles";
 import CustomTagInput from "./CustomTagInput";
 import GameTagInput from "./GameTagInput";
 
-const StyledFeedBox = styled.div`
-    background-color: #fff;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+const StyledFeedBox = styled(Card)`
     display: flex;
     flex-direction: column;
     margin: 10px;
-    outline: none;
     padding: 10px;
 `;
 
