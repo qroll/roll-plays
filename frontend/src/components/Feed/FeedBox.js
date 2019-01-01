@@ -1,6 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 
+import { callApi } from "src/utils/callApi";
+
 import { Button } from "src/components/Button";
 import { GRAY } from "src/components/styles";
 import CustomTagInput from "./CustomTagInput";
@@ -39,7 +41,9 @@ class FeedBox extends React.Component {
     state = {
         post: "",
         games: [],
-        tags: []
+        tags: [],
+        submitting: false,
+        error: false
     };
 
     handleOnGameChange = games => {
@@ -55,7 +59,27 @@ class FeedBox extends React.Component {
     };
 
     handleOnPostSubmit = e => {
-        this.setState({ post: "", tags: [] });
+        let form = {
+            body: this.state.post,
+            games: this.state.games,
+            tags: this.state.tags
+        };
+        callApi("/post", "post", { post: form })
+            .then(res => {
+                this.setState({
+                    submitting: false,
+                    error: false,
+                    post: "",
+                    games: [],
+                    tags: []
+                });
+            })
+            .catch(err => {
+                this.setState({
+                    submitting: false,
+                    error: "Request failed. Try again."
+                });
+            });
     };
 
     render() {

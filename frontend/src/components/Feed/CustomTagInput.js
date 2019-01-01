@@ -16,6 +16,10 @@ class CustomTagInput extends React.Component {
         tagInput: ""
     };
 
+    handleOnBlur = e => {
+        this.setState({ tagInput: "" });
+    };
+
     handleOnChange = e => {
         this.setState({ tagInput: e.target.value });
     };
@@ -50,6 +54,7 @@ class CustomTagInput extends React.Component {
                     <TagInput
                         type="text"
                         value={this.state.tagInput}
+                        onBlur={this.handleOnBlur}
                         onChange={this.handleOnChange}
                         onKeyDown={this.handleOnKey}
                         placeholder={tags.length ? null : "Add a tag"}

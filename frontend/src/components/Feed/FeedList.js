@@ -1,12 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import markdown from "markdown-it";
 
 import { getContrastColor } from "src/utils/color";
 import { displayTime } from "src/utils/time";
-
-const md = markdown();
 
 const PostBox = styled.div`
     background-color: #fff;
@@ -64,10 +61,12 @@ const Tag = styled.span`
     padding: 3px 5px;
 `;
 
-const PostTags = ({ game, tags = [] }) => {
+const PostTags = ({ games = [], tags = [] }) => {
     return (
         <div style={{ paddingBottom: "10px" }}>
-            {game && <Tag color="#E34234">{game}</Tag>}
+            {games.map(game => (
+                <Tag color="#E34234">{game}</Tag>
+            ))}
             {tags.map((tag, index) => (
                 <Tag key={index}>{tag}</Tag>
             ))}
@@ -77,8 +76,8 @@ const PostTags = ({ game, tags = [] }) => {
 
 const Post = ({ post }) => (
     <PostBox>
-        <PostBody dangerouslySetInnerHTML={{ __html: md.render(post.body) }} />
-        <PostTags game={post.game} tags={post.tags} />
+        <PostBody>{post.body}</PostBody>
+        <PostTags game={post.games} tags={post.tags} />
         <PostFooter>
             <Link to="/">
                 <PostDate>{displayTime(post.date)}</PostDate>

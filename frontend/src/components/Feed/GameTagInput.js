@@ -3,6 +3,8 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import Autocomplete from "react-autocomplete";
 
+import { callApi } from "src/utils/callApi";
+
 import { ControllerIcon } from "src/components/Icons";
 
 import { TagContainer, Tag, TagInput } from "./Tags";
@@ -30,7 +32,7 @@ const ComboBox = props => {
             }
             renderItem={(game, isHighlighted) => (
                 <div
-                    key={game.gameId}
+                    key={game._id}
                     style={{
                         backgroundColor: isHighlighted ? "#e0e0e0" : "#ffffff",
                         padding: "3px",
@@ -80,23 +82,16 @@ class GameTagInput extends React.Component {
 
     normalize = games => {
         return games.reduce((acc, game) => {
-            acc[game.gameId] = game;
+            acc[game._id] = game;
             return acc;
         }, {});
     };
 
     componentDidMount() {
-        let games = [
-            { gameId: 1, title: "Portal" },
-            { gameId: 2, title: "Dishonored: Death of the Outsider" },
-            { gameId: 3, title: "The Witness" },
-            { gameId: 4, title: "Hollow Knight" },
-            { gameId: 5, title: "Dishonored 2" },
-            { gameId: 6, title: "Mirror's Edge" },
-            { gameId: 7, title: "The Sims 2" },
-            { gameId: 8, title: "The Sims 4" }
-        ];
-        this.setState({ games: this.normalize(games) });
+        callApi("/game").then(res => {
+            let { data } = res.data;
+            this.setState({ games: this.normalize(data.games) });
+        });
     }
 
     handleOnBlur = e => {
@@ -110,8 +105,8 @@ class GameTagInput extends React.Component {
     handleOnSelect = (value, item) => {
         this.setState({ input: "" });
 
-        if (!this.props.selectedGames.includes(item.gameId)) {
-            let games = this.props.selectedGames.concat(item.gameId);
+        if (!this.props.selectedGames.includes(item._id)) {
+            let games = this.props.selectedGames.concat(item._id);
             this.props.onGameChange(games);
         }
     };
