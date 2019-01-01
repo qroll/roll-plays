@@ -1,6 +1,6 @@
 import BaseController from "~/src/utils/BaseController";
 
-import GameService from "./service";
+import GameService from "./game.service";
 
 class GameController extends BaseController {
     constructor() {

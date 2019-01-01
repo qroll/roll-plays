@@ -1,6 +1,6 @@
 import express from "express";
 
-import RankController from "./controller";
+import RankController from "./rank.controller";
 
 const router = express.Router();
 const controller = new RankController();

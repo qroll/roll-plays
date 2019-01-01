@@ -1,6 +1,6 @@
 import express from "express";
 
-import FeedController from "./controller";
+import FeedController from "./post.controller";
 
 const router = express.Router();
 const controller = new FeedController();

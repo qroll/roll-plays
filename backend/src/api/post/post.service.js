@@ -4,7 +4,7 @@ import BaseController from "~/src/utils/BaseController";
 class FeedService {
     async retrievePosts() {
         let posts = await Post.find()
-            .populate("games", { select: "title" })
+            .populate("games")
             .exec();
         return posts;
     }

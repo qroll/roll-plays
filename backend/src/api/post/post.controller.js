@@ -1,7 +1,6 @@
-import Post from "~/src/models/post";
 import BaseController from "~/src/utils/BaseController";
 
-import FeedService from "./service";
+import FeedService from "./post.service";
 
 class FeedController extends BaseController {
     constructor() {
