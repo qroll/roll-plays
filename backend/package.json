@@ -25,7 +25,10 @@
         "clean": "rm -rf build && mkdir build",
         "build": "babel --out-dir ./build ./src",
         "start": "node ./build/server.js",
-        "test": "jest --watch"
+        "test": "jest --watch",
+        "db:seed": "babel-node seed.js",
+        "db:unseed": "babel-node unseed.js",
+        "db:reseed": "npm run db:unseed && npm run db:seed"
     },
     "devDependencies": {
         "babel-cli": "^6.26.0",
