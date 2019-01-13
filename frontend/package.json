@@ -5,6 +5,7 @@
     "dependencies": {
         "axios": "^0.17.1",
         "markdown-it": "^8.4.2",
+        "memoize-one": "^5.0.0",
         "moment": "^2.23.0",
         "react": "^16.7.0",
         "react-autocomplete": "^1.8.1",

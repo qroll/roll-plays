@@ -15,3 +15,6 @@ export const ACCENT = {
 };
 
 export const WHITE = "#FFFFFF";
+
+export const FONT_MAIN = `"Roboto", sans-serif`;
+export const FONT_TITLE = `"Roboto Condensed", serif`;

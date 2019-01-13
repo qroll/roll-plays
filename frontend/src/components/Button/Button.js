@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { GRAY } from "src/components/styles";
+import { GRAY, FONT_MAIN } from "src/components/styles";
 
 const Button = styled.button`
     align-self: flex-end;
@@ -9,6 +9,7 @@ const Button = styled.button`
     background-color: ${GRAY.LIGHTEST};
     color: ${GRAY.DARKER};
     flex: 0 0 auto;
+    font-family: ${FONT_MAIN};
     font-size: 0.9rem;
     margin: 10px;
     outline: none;

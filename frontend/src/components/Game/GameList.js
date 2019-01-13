@@ -1,40 +1,94 @@
 import React from "react";
-import styled from "styled-components";
 
 import { callApi } from "src/utils/callApi";
 
-import List from "src/components/Container/List";
-import ListItem from "src/components/Container/ListItem";
-
-const StyledList = styled(List)`
-    margin: 20px 10px;
-`;
+import { GameLibrary } from "./GameLibrary";
+import { GameStatusGraph } from "./GameStatusGraph";
+import { Toolbar } from "./Toolbar";
 
 class GameList extends React.Component {
     state = {
-        games: []
+        isLoaded: false,
+        games: [],
+        form: null
     };
 
     componentDidMount() {
         callApi("/game").then(res => {
             let games = res.data.data;
-            this.setState({ games: games });
+            this.setState({ games: games, isLoaded: true });
         });
     }
 
+    onEdit = () => {
+        this.setState(prevState => ({
+            massEditMode: true,
+            form: prevState.games.reduce((normalized, game) => {
+                normalized[game._id] = { ...game, isDeleted: false };
+                return normalized;
+            }, {})
+        }));
+    };
+
+    onSave = () => {
+        let changedGames = this.state.games.filter(origGame => {
+            let formGame = this.state.form[origGame._id];
+            return (
+                origGame.inLibrary !== formGame.inLibrary ||
+                origGame.status !== formGame.status ||
+                formGame.isDeleted === true
+            );
+        });
+
+        callApi("/game", "put", { games: changedGames })
+            .then(res => {
+                this.setState({
+                    massEditMode: false
+                });
+            })
+            .catch(err => {});
+    };
+
+    onCancel = () => {
+        this.setState({ massEditMode: false });
+    };
+
+    onChange = gameId => (name, value) => {
+        this.setState(prevState => {
+            let game = prevState.form[gameId];
+            return {
+                form: {
+                    ...prevState.form,
+                    [gameId]: { ...game, [name]: value }
+                }
+            };
+        });
+    };
+
     render() {
-        let { games } = this.state;
+        let { games, isLoaded, massEditMode, form } = this.state;
+
+        if (!isLoaded) {
+            return null;
+        }
 
         return (
-            <StyledList>
-                {games.map(game => {
-                    return (
-                        <ListItem id={game._id} key={game._id}>
-                            {game.title}
-                        </ListItem>
-                    );
-                })}
-            </StyledList>
+            <React.Fragment>
+                <Toolbar
+                    massEditMode={massEditMode}
+                    onEdit={this.onEdit}
+                    onSave={this.onSave}
+                    onCancel={this.onCancel}
+                />
+                <GameStatusGraph games={games} />
+                <GameLibrary
+                    form={form}
+                    games={games}
+                    onEdit={this.onEdit}
+                    massEditMode={massEditMode}
+                    onChange={this.onChange}
+                />
+            </React.Fragment>
         );
     }
 }

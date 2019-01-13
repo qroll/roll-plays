@@ -2,14 +2,14 @@ import React, { Component } from "react";
 import styled from "styled-components";
 
 const Page = styled.div`
-  flex: 1;
-  margin: auto;
+    display: flex;
+    flex: 1;
 `;
 
 class Main extends Component {
-  render() {
-    return <Page>Hello</Page>;
-  }
+    render() {
+        return <Page />;
+    }
 }
 
 export default Main;

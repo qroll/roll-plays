@@ -7,10 +7,13 @@ import GameList from "./GameList";
 class Game extends React.Component {
     render() {
         return (
-            <Page>
-                <AddGame />
-                <GameList />
-            </Page>
+            <React.Fragment>
+                <Page>
+                    <AddGame />
+                    <GameList />
+                </Page>
+                <Page />
+            </React.Fragment>
         );
     }
 }
