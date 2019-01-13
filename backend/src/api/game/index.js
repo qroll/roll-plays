@@ -13,6 +13,10 @@ router.post("/", (req, res) => {
     controller.createGame(req, res);
 });
 
+router.put("/", (req, res) => {
+    controller.editGames(req, res);
+});
+
 router.get("/activity", (req, res) => {
     controller.retrieveActivity(req, res);
 });

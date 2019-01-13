@@ -33,14 +33,14 @@ export const GameLibrary = props => {
         <List style={{ margin: "20px 10px" }}>
             {games.map(game => {
                 return massEditMode ? (
-                    <ListItem id={game._id} key={game._id}>
+                    <ListItem id={game.id} key={game.id}>
                         <GameInfo>
                             <Title>{game.title}</Title>
                             <FormCheckbox
                                 label="In library"
                                 name="inLibrary"
-                                isChecked={form[game._id].inLibrary}
-                                onChange={onChange(game._id)}
+                                isChecked={form[game.id].inLibrary}
+                                onChange={onChange(game.id)}
                             />
                             <FormDropdown
                                 items={[
@@ -49,14 +49,14 @@ export const GameLibrary = props => {
                                     { value: "backlog", label: "Backlog" }
                                 ]}
                                 name="status"
-                                value={form[game._id].status}
-                                onChange={onChange(game._id)}
+                                value={form[game.id].status}
+                                onChange={onChange(game.id)}
                                 creatable
                             />
                         </GameInfo>
                     </ListItem>
                 ) : (
-                    <ListItem id={game._id} key={game._id}>
+                    <ListItem id={game.id} key={game.id}>
                         <GameInfo>
                             <Title>{game.title}</Title>
                             <Library>{game.inLibrary && "In library"}</Library>

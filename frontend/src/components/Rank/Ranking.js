@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { normalize, schema } from "normalizr";
 
 import RankingInfo from "./RankingInfo";
 import { GRAY, ACCENT, WHITE } from "src/components/styles";
@@ -57,7 +58,7 @@ const ItemTitle = styled.div`
 `;
 
 const DraggableRankItem = ({ rank, game = {} }) => (
-    <Draggable draggableId={game._id}>
+    <Draggable draggableId={game.id}>
         {provided => (
             <div
                 ref={provided.innerRef}
@@ -77,7 +78,7 @@ const DraggableRankItem = ({ rank, game = {} }) => (
 const RankingList = ({ ranking, games, onDragEnd }) => (
     <RankCategory>
         <RankingInfo name={ranking.name} description={ranking.description} />
-        <Droppable droppableId={ranking._id}>
+        <Droppable droppableId={`rank-${ranking.id}`}>
             {provided => (
                 <div ref={provided.innerRef}>
                     {ranking.games.map((gameId, index) => (
@@ -95,19 +96,26 @@ const RankingList = ({ ranking, games, onDragEnd }) => (
 );
 
 class Ranking extends React.Component {
-    state = { rankedGames: {}, games: {} };
+    state = { rankInfo: [], games: {} };
 
     componentDidMount() {
         callApi("/rank").then(res => {
-            let { data } = res;
-            let rankedGames = {};
-            data.ranks.forEach(rank => (rankedGames[rank._id] = rank));
-            this.setState({ rankedGames });
-        });
-        callApi("/game").then(res => {
-            let games = {};
-            res.data.data.forEach(game => (games[game._id] = game));
-            this.setState({ games });
+            let { rankedGames, unrankedGames } = res.data.data;
+
+            const gameSchema = new schema.Entity("games");
+            const rankSchema = [{ games: [gameSchema] }];
+            const gameListSchema = [gameSchema];
+
+            let normalizedRanks = normalize(rankedGames, rankSchema);
+            let normalizedGames = normalize(unrankedGames, gameListSchema);
+
+            this.setState({
+                rankInfo: normalizedRanks.result,
+                games: {
+                    ...normalizedRanks.entities.games,
+                    ...normalizedGames.entities.games
+                }
+            });
         });
     }
 
@@ -125,40 +133,40 @@ class Ranking extends React.Component {
 
         if (srcId === dstId) {
             let games = reorder(
-                this.state.rankedGames[srcId].games,
+                this.state.rankInfo[srcId].games,
                 source.index,
                 destination.index
             );
 
             this.setState({
-                rankedGames: {
-                    ...this.state.rankedGames,
+                rankInfo: {
+                    ...this.state.rankInfo,
                     [srcId]: {
-                        ...this.state.rankedGames[srcId],
+                        ...this.state.rankInfo[srcId],
                         games
                     }
                 }
             });
         } else {
             let dstGames = insert(
-                this.state.rankedGames[dstId].games,
+                this.state.rankInfo[dstId].games,
                 destination.index,
-                this.state.rankedGames[srcId].games[source.index]
+                this.state.rankInfo[srcId].games[source.index]
             );
             let srcGames = remove(
-                this.state.rankedGames[srcId].games,
+                this.state.rankInfo[srcId].games,
                 source.index
             );
 
             this.setState({
-                rankedGames: {
-                    ...this.state.rankedGames,
+                rankInfo: {
+                    ...this.state.rankInfo,
                     [srcId]: {
-                        ...this.state.rankedGames[srcId],
+                        ...this.state.rankInfo[srcId],
                         games: srcGames
                     },
                     [dstId]: {
-                        ...this.state.rankedGames[dstId],
+                        ...this.state.rankInfo[dstId],
                         games: dstGames
                     }
                 }
@@ -167,13 +175,14 @@ class Ranking extends React.Component {
     };
 
     render() {
+        let { rankInfo, games } = this.state;
         return (
             <DragDropContext onDragEnd={this.onDragEnd}>
-                {Object.values(this.state.rankedGames).map((ranking, index) => (
+                {rankInfo.map(ranking => (
                     <RankingList
-                        key={index}
+                        key={ranking.id || 0}
                         ranking={ranking}
-                        games={this.state.games}
+                        games={games}
                         onDragEnd={this.onDragEnd}
                     />
                 ))}

@@ -1,17 +1,21 @@
-import mongoose from "./mongoose";
-const Schema = mongoose.Schema;
+import { Model } from "~/src/db";
 
-let PostSchema = new Schema(
-    {
-        body: { type: String, required: true },
-        games: [{ type: Schema.Types.ObjectId, ref: "Game" }],
-        tags: { type: [], default: [] }
-    },
-    {
-        timestamps: true,
-        strict: false
-    }
-);
+export default class PostModel extends Model {
+    static tableName = "post";
 
-const Post = mongoose.model("Post", PostSchema);
-module.exports = Post;
+    static jsonSchema = {
+        type: "object",
+
+        properties: {
+            id: { type: "integer" },
+            data: {
+                type: "object",
+                properties: {
+                    body: { type: "string" },
+                    games: { type: "array" },
+                    tags: { type: "array" }
+                }
+            }
+        }
+    };
+}

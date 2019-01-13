@@ -34,6 +34,17 @@ class GameController extends BaseController {
         }
     }
 
+    async editGames(req, res) {
+        try {
+            let { games } = req.body;
+            await this.service.editGames(games);
+            let updatedGames = await this.service.retrieveGames();
+            this.success(res, updatedGames);
+        } catch (err) {
+            this.failure(res, err);
+        }
+    }
+
     async retrieveActivity(req, res) {
         try {
             const options = {

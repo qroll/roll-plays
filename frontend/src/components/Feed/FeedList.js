@@ -104,7 +104,7 @@ class FeedList extends React.Component {
         return (
             <StyledFeedList>
                 {posts.map(post => (
-                    <Post key={post._id} post={post} />
+                    <Post key={post.id} post={post} />
                 ))}
             </StyledFeedList>
         );

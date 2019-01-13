@@ -1,5 +1,6 @@
 import migrate from "migrate";
 import mongoose from "~/src/models/mongoose";
+import { knex } from "~/src/db";
 
 migrate.load(
     {
@@ -16,6 +17,7 @@ migrate.load(
             }
             console.log("Migrations successfully reset");
             mongoose.disconnect();
+            knex.destroy();
         });
     }
 );

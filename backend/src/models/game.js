@@ -1,23 +1,22 @@
-import mongoose from "./mongoose";
-const Schema = mongoose.Schema;
+import { Model } from "~/src/db";
 
-let GameSchema = new Schema(
-    {
-        appID: { type: String },
-        title: { type: String, required: true },
-        releaseDate: { type: String },
-        inLibrary: { type: Boolean, required: true },
-        status: {
-            type: String,
-            required: false,
-            enum: ["completed", "played", "unplayed"]
+export default class GameModel extends Model {
+    static tableName = "game";
+
+    static jsonSchema = {
+        type: "object",
+        required: ["title", "inLibrary"],
+
+        properties: {
+            id: { type: "integer" },
+            appId: { type: ["integer", "string"] },
+            title: { type: "string" },
+            releaseDate: { type: "string", format: "date" },
+            inLibrary: { type: "boolean" },
+            status: {
+                type: "string",
+                enum: ["completed", "played", "unplayed"]
+            }
         }
-    },
-    {
-        timestamps: true,
-        strict: false
-    }
-);
-
-const Game = mongoose.model("Game", GameSchema);
-module.exports = Game;
+    };
+}

@@ -5,7 +5,7 @@ import Logger from "~/src/utils/Logger";
 
 mongoose.Promise = bluebird;
 
-import { DB } from "../config";
+import { SESSION } from "../config";
 
 let options = {
     keepAlive: 100,
@@ -19,7 +19,7 @@ let options = {
 };
 
 mongoose.connect(
-    DB.URI,
+    SESSION.DB_URI,
     options
 );
 

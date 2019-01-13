@@ -10,10 +10,10 @@ class RankController extends BaseController {
 
     async retrieveRanks(req, res) {
         try {
-            let ranks = await this.service.retrieveRanks();
-            res.json({ ranks });
+            let ranks = await this.service.retrieveGamesByRanking();
+            this.success(res, ranks);
         } catch (err) {
-            res.sendStatus(500);
+            this.failure(res, err);
         }
     }
 
@@ -22,9 +22,9 @@ class RankController extends BaseController {
 
         try {
             let createdRank = await this.service.createRank(rank);
-            res.json(createdRank);
+            this.success(res, createdRank);
         } catch (err) {
-            res.sendStatus(500);
+            this.failure(res, err);
         }
     }
 
@@ -34,9 +34,9 @@ class RankController extends BaseController {
 
         try {
             let updatedRank = await this.service.updateRankById(rankId, rank);
-            res.sendStatus(200);
+            this.success(res, updatedRank);
         } catch (err) {
-            res.sendStatus(500);
+            this.failure(res, err);
         }
     }
 }

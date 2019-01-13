@@ -1,31 +1,35 @@
 "use strict";
 
-import Game from "~/src/models/game";
+import { knex } from "~/src/db";
 import Rank from "~/src/models/rank";
 
-module.exports.up = function(next) {
-    return Game.find()
-        .exec()
-        .then(games => {
-            return Rank.create([
-                {
-                    name: "Great",
-                    description:
-                        "Fantastic gameplay or narrative elements that left a deep impression",
-                    games: [games[0]._id, games[1]._id, games[2]._id]
-                },
-                {
-                    name: "Entertaining",
-                    description: "Solid mechanics, time well spent",
-                    games: [games[3]._id]
-                }
-            ]);
-        })
-        .then(() => next());
+module.exports.up = async function(next) {
+    await knex.schema.createTable("rank", table => {
+        table.increments();
+        table.string("name");
+        table.string("description");
+    });
+
+    let ranks = [
+        {
+            id: 1,
+            name: "Great",
+            description:
+                "Fantastic gameplay or narrative elements that left a deep impression"
+        },
+        {
+            id: 2,
+            name: "Entertaining",
+            description: "Solid mechanics, time well spent"
+        }
+    ];
+
+    await Rank.query().insert(ranks);
+
+    next();
 };
 
-module.exports.down = function(next) {
-    return Rank.deleteMany({})
-        .exec()
-        .then(() => next());
+module.exports.down = async function(next) {
+    await knex.schema.dropTableIfExists("rank");
+    next();
 };

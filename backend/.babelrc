@@ -1,5 +1,7 @@
 {
-    "presets": ["env"],
+    "presets": [
+        ["@babel/env", { "exclude": ["babel-plugin-transform-classes"] }]
+    ],
     "plugins": [
         [
             "module-resolver",
@@ -10,7 +12,8 @@
                 }
             }
         ],
-        "transform-object-rest-spread",
-        "transform-runtime"
+        "@babel/plugin-proposal-object-rest-spread",
+        "@babel/plugin-transform-runtime",
+        "@babel/plugin-proposal-class-properties"
     ]
 }

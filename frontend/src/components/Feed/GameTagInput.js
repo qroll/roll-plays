@@ -33,7 +33,7 @@ const ComboBox = props => {
             }
             renderItem={(game, isHighlighted) => (
                 <div
-                    key={game._id}
+                    key={game.id}
                     style={{
                         backgroundColor: isHighlighted ? GRAY.LIGHTER : WHITE,
                         padding: "3px",
@@ -83,7 +83,7 @@ class GameTagInput extends React.Component {
 
     normalize = games => {
         return games.reduce((acc, game) => {
-            acc[game._id] = game;
+            acc[game.id] = game;
             return acc;
         }, {});
     };
@@ -106,8 +106,8 @@ class GameTagInput extends React.Component {
     handleOnSelect = (value, item) => {
         this.setState({ input: "" });
 
-        if (!this.props.selectedGames.includes(item._id)) {
-            let games = this.props.selectedGames.concat(item._id);
+        if (!this.props.selectedGames.includes(item.id)) {
+            let games = this.props.selectedGames.concat(item.id);
             this.props.onGameChange(games);
         }
     };

@@ -24,7 +24,7 @@ class GameList extends React.Component {
         this.setState(prevState => ({
             massEditMode: true,
             form: prevState.games.reduce((normalized, game) => {
-                normalized[game._id] = { ...game, isDeleted: false };
+                normalized[game.id] = { ...game, isDeleted: false };
                 return normalized;
             }, {})
         }));
@@ -32,7 +32,7 @@ class GameList extends React.Component {
 
     onSave = () => {
         let changedGames = this.state.games.filter(origGame => {
-            let formGame = this.state.form[origGame._id];
+            let formGame = this.state.form[origGame.id];
             return (
                 origGame.inLibrary !== formGame.inLibrary ||
                 origGame.status !== formGame.status ||

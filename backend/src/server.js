@@ -4,7 +4,7 @@ import express from "express";
 
 import Logger from "~/src/utils/Logger";
 import User from "~/src/models/user";
-import { DB, SESSION, inEnv } from "~/src/config";
+import { SESSION, inEnv } from "~/src/config";
 import { errorBuilder } from "~/src/utils/ResponseBuilder";
 
 //==============================================================
@@ -65,7 +65,7 @@ let sessionOptions = {
     saveUninitialized: true,
     secret: SESSION.SIGNING_KEY,
     store: new MongoDBStore({
-        uri: DB.URI,
+        uri: SESSION.DB_URI,
         collection: "sessions"
     })
 };

@@ -1,13 +1,16 @@
 import "./env";
 
-export const { DB } = require("./db");
+export const { APP_DB } = require("./appDb");
 
 export const LOG = {
     LOG_LEVEL: process.env.LOG_LEVEL
 };
 
+const { SESSION_DB } = require("./sessionDb");
+
 export const SESSION = {
-    SIGNING_KEY: "cat blep"
+    SIGNING_KEY: "cat blep",
+    DB_URI: SESSION_DB.URI
 };
 
 export const STEAM_API = {
