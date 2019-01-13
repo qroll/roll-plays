@@ -3,7 +3,7 @@ import React from "react";
 import Page from "src/components/Container/Page";
 import { UserSession } from "../Session";
 import AddRank from "./AddRank";
-import Ranking from "./Ranking";
+import RankList from "./RankList";
 
 class Rank extends React.Component {
     render() {
@@ -12,7 +12,7 @@ class Rank extends React.Component {
                 <UserSession>
                     <AddRank />
                 </UserSession>
-                <Ranking />
+                <RankList />
             </Page>
         );
     }
