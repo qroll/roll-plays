@@ -18,7 +18,7 @@ services:
       - "443:443"
     volumes:
       - /srv/rollplays/etc/letsencrypt:/etc/letsencrypt
-      - /srv/rollplays/data/letsencrypt:/data/letsencrypt
+      - ~/roll-plays/nginx-letsencrypt/site:/data/letsencrypt
 networks:
   default:
     external:
