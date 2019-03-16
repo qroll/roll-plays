@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 import Card from "src/components/Container/Card";
-import { FONT_TITLE, ACCENT } from "src/components/styles";
+import { TextButton } from "src/components/Button";
 
 const Wrapper = styled(Card)`
     display: flex;
@@ -13,15 +13,6 @@ const Wrapper = styled(Card)`
     position: sticky;
     top: 0;
     right: 0;
-`;
-
-const TextButton = styled.span`
-    cursor: pointer;
-    font-family: ${FONT_TITLE};
-
-    &:hover {
-        color: ${ACCENT.PRIMARY};
-    }
 `;
 
 export const Toolbar = props => {

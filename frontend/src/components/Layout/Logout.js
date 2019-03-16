@@ -1,29 +1,20 @@
 import React from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import styled from "styled-components";
 
-import { TextLink } from "../Common";
+import { ClearButton } from "src/components/Button";
 
-import * as actions from "../../actions/user";
-
-const StyledLink = styled(TextLink)`
-    background-color: rgba(0, 0, 0, 0.1);
-    border-radius: 3px;
-    color: #fff;
-    font-family: "Roboto Condensed";
-    padding: 10px 15px;
-`;
+import * as actions from "src/actions/user";
 
 class Logout extends React.Component {
     render() {
         return (
-            <StyledLink
+            <ClearButton
                 onClick={() => this.props.actions.logout()}
                 style={this.props.style}
             >
                 Logout
-            </StyledLink>
+            </ClearButton>
         );
     }
 }

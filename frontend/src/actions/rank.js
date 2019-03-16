@@ -3,10 +3,12 @@ import { normalize, schema } from "normalizr";
 import ApiManager from "src/utils/apiManager";
 
 export const retrieveRanks = () => {
-    return ApiManager.get("/rank").then(res => {
-        let ranks = res.data.data;
-        return ranks;
-    });
+    return ApiManager.get("/rank")
+        .then(res => {
+            let ranks = res.data.data;
+            return ranks;
+        })
+        .then(normalizeRanks);
 };
 
 export const createRank = rank => {
@@ -15,6 +17,23 @@ export const createRank = rank => {
 
 export const editRank = rank => {
     return ApiManager.put("/rank", rank);
+};
+
+export const editGamesInRanks = rankInfo => {
+    let rankedGames = [];
+    let unrankedGames = [];
+
+    Object.values(rankInfo).forEach(ranking => {
+        if (ranking.id < 0) {
+            unrankedGames.push(ranking.games);
+        } else {
+            ranking.games.forEach(game => {
+                rankedGames.push({ rankId: ranking.id, gameId: game });
+            });
+        }
+    });
+
+    return ApiManager.put("/rank/games", { rankedGames, unrankedGames });
 };
 
 export const normalizeRanks = ranks => {
@@ -31,8 +50,13 @@ export const normalizeRanks = ranks => {
     let normalizedGames = normalize(unrankedGames, gameListSchema);
 
     return {
-        rankInfo: normalizedRanks.entities.ranks,
-        games: normalizedRanks.entities.games,
-        unrankedGames: normalizedGames.entities.games
+        rankInfo: {
+            ...normalizedRanks.entities.ranks,
+            "-1": { id: "-1", name: "Unranked", games: normalizedGames.result }
+        },
+        games: {
+            ...normalizedRanks.entities.games,
+            ...normalizedGames.entities.games
+        }
     };
 };

@@ -3,7 +3,7 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import styled from "styled-components";
 
-import { Button } from "./Button";
+import { Button } from "src/components/Button";
 
 import * as actions from "../actions/user";
 

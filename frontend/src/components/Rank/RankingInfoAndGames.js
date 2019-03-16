@@ -2,8 +2,11 @@ import React from "react";
 import styled from "styled-components";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
-import RankingInfo from "./RankingInfo";
 import { GRAY, ACCENT, WHITE, RGBA } from "src/components/styles";
+import { ErrorBar } from "src/components/ErrorBar";
+import { TextButton } from "src/components/Button";
+import RankingInfo from "./RankingInfo";
+import Card from "../Container/Card";
 
 const RankCategory = styled.div`
     margin: auto;
@@ -52,6 +55,29 @@ const Placeholder = styled.div`
     margin: 10px;
     padding: 10px;
 `;
+
+const Wrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 10px;
+    padding: 10px;
+`;
+
+const Toolbar = ({ onSave, isSaving, hasUnsavedChanges }) => (
+    <Wrapper>
+        <Card style={{ padding: "10px" }}>
+            <TextButton onClick={onSave} disabled={isSaving}>
+                {isSaving ? "Saving" : "Save"}
+            </TextButton>
+        </Card>
+        {hasUnsavedChanges && (
+            <ErrorBar style={{ marginTop: "1rem" }}>
+                There are unsaved changes
+            </ErrorBar>
+        )}
+    </Wrapper>
+);
 
 const NoGames = () => <Placeholder>No games here</Placeholder>;
 
@@ -122,51 +148,31 @@ const RankingList = ({ ranking, gamesById }) => (
     </RankCategory>
 );
 
-const UnrankedGameList = ({ games }) => (
-    <Droppable droppableId={"-1"}>
-        {provided => (
-            <div ref={provided.innerRef} {...provided.droppableProps}>
-                <RankCategory>
-                    <RankingInfo
-                        name="Unranked"
-                        // description=
-                    />
-                    {games.length ? (
-                        games.map((game, index) => (
-                            <RankItem
-                                key={game.id}
-                                index={index}
-                                rank={index + 1}
-                                game={game}
-                            />
-                        ))
-                    ) : (
-                        <NoGames />
-                    )}
-                    {provided.placeholder}
-                </RankCategory>
-            </div>
-        )}
-    </Droppable>
-);
-
 export const EditableRanking = ({
     onDragEnd = () => {},
     rankInfo = [],
     gamesById = {},
-    unrankedGames = []
+    onSave = () => {},
+    isSaving = false,
+    hasUnsavedChanges = false
 }) => (
-    <DragDropContext onDragEnd={onDragEnd}>
-        {rankInfo.map(ranking => (
-            <DroppableRankingList
-                key={ranking.id || 0}
-                ranking={ranking}
-                gamesById={gamesById}
-                onDragEnd={this.onDragEnd}
-            />
-        ))}
-        <UnrankedGameList games={unrankedGames} />
-    </DragDropContext>
+    <React.Fragment>
+        <Toolbar
+            onSave={onSave}
+            isSaving={isSaving}
+            hasUnsavedChanges={hasUnsavedChanges}
+        />
+        <DragDropContext onDragEnd={onDragEnd}>
+            {rankInfo.map(ranking => (
+                <DroppableRankingList
+                    key={ranking.id || 0}
+                    ranking={ranking}
+                    gamesById={gamesById}
+                    onDragEnd={this.onDragEnd}
+                />
+            ))}
+        </DragDropContext>
+    </React.Fragment>
 );
 
 export const UneditableRanking = ({ rankInfo = [], gamesById = {} }) => (

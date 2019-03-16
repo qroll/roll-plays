@@ -3,16 +3,16 @@ import styled from "styled-components";
 
 import { GRAY } from "src/components/styles";
 
-import icons from "./icons.svg";
-
 const Div = styled.div`
     display: inline-block;
     flex-shrink: 0;
+    height: 1.5rem;
+    width: 1.5rem;
 `;
 
 const Svg = styled.svg`
-    height: 24px;
-    width: 24px;
+    height: 100%;
+    width: 100%;
     fill: ${({ fill }) => fill || GRAY.LIGHT};
     ${({ hover }) =>
         hover
@@ -54,15 +54,33 @@ export const ControllerIcon = ({ color, style }) => {
     );
 };
 
-const SVGIcon = ({ name, onClick, color }) => (
-    <Svg onClick={onClick} fill={color}>
-        <use xlinkHref={`${icons}#${name}`} />
-    </Svg>
-);
+export const ErrorIcon = ({ color, style }) => {
+    return (
+        <Div style={style}>
+            <Svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill={color}
+            >
+                <path d="M11 15h2v2h-2v-2zm0-8h2v6h-2V7zm.99-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+            </Svg>
+        </Div>
+    );
+};
 
-export const DotsHorizontalIcon = ({ onClick, color }) => (
-    <SVGIcon name="icon-dots-horizontal" onClick={onClick} color={color} />
-);
+export const DotsHorizontalIcon = ({ color, style, onClick }) => {
+    return (
+        <Div style={style} onClick={onClick}>
+            <Svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill={color}
+            >
+                <path d="M16,12A2,2 0 0,1 18,10A2,2 0 0,1 20,12A2,2 0 0,1 18,14A2,2 0 0,1 16,12M10,12A2,2 0 0,1 12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12M4,12A2,2 0 0,1 6,10A2,2 0 0,1 8,12A2,2 0 0,1 6,14A2,2 0 0,1 4,12Z" />
+            </Svg>
+        </Div>
+    );
+};
 
 export const EditIcon = ({ color, style }) => {
     return (
