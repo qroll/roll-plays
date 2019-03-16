@@ -13,14 +13,24 @@ module.exports.up = async function(next) {
     let ranks = [
         {
             id: 1,
-            name: "Great",
+            name: "Woah",
             description:
-                "Fantastic gameplay or narrative elements that left a deep impression"
+                "Gameplay or narrative elements that left a deep impression on me"
         },
         {
             id: 2,
             name: "Entertaining",
-            description: "Solid mechanics, time well spent"
+            description: "Time well spent"
+        },
+        {
+            id: 3,
+            name: "I was whelmed",
+            description: "It was okay, I guess"
+        },
+        {
+            id: 4,
+            name: "Nah",
+            description: "Sorry"
         }
     ];
 

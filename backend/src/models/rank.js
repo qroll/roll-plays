@@ -1,6 +1,6 @@
 import { Model } from "~/src/db";
 import GameModel from "./game";
-import GameRankModel from "./game";
+import GameRankModel from "./gameRank";
 
 export default class RankModel extends Model {
     static tableName = "rank";
@@ -23,7 +23,7 @@ export default class RankModel extends Model {
             join: {
                 from: "rank.id",
                 through: {
-                    // modelClass: GameRankModel,
+                    modelClass: GameRankModel,
                     from: "gameRank.rankId",
                     to: "gameRank.gameId"
                 },
