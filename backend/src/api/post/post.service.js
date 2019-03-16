@@ -3,7 +3,7 @@ import Post from "~/src/models/post";
 class FeedService {
     async retrievePosts() {
         let posts = await Post.query();
-        return posts;
+        return posts.map(post => ({ id: post.id, ...post.data }));
     }
 
     async createPost(post) {
