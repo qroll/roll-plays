@@ -25,7 +25,7 @@ export const editGamesInRanks = rankInfo => {
 
     Object.values(rankInfo).forEach(ranking => {
         if (ranking.id < 0) {
-            unrankedGames.push(ranking.games);
+            unrankedGames = ranking.games;
         } else {
             ranking.games.forEach(game => {
                 rankedGames.push({ rankId: ranking.id, gameId: game });

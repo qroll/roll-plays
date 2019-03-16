@@ -13,6 +13,10 @@ router.post("/", (req, res) => {
     controller.createRank(req, res);
 });
 
+router.put("/games", (req, res) => {
+    controller.updateGameRanks(req, res);
+});
+
 router.put("/:id", (req, res) => {
     controller.updateRankById(req, res);
 });

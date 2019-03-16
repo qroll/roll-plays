@@ -5,9 +5,9 @@ import GameRankModel from "~/src/models/gameRank";
 
 module.exports.up = async function(next) {
     await knex.schema.createTable("gameRank", table => {
-        table.increments();
         table.integer("rankId");
         table.integer("gameId");
+        table.primary(["rankId", "gameId"]);
     });
 
     let gameRanks = [

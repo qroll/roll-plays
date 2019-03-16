@@ -8,9 +8,9 @@ const MAP_STATUS_TO_MESSAGE = {
 };
 
 export const errorBuilder = options => {
+    let { message, error } = options;
     let status = options.status || error instanceof ClientError ? 400 : 500;
     let code = options.code || error instanceof ClientError ? 400 : 500;
-    let { message, error } = options;
 
     return {
         status: status,

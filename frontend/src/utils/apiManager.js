@@ -15,8 +15,8 @@ class ApiManager {
         return instance.post(endpoint, body);
     }
 
-    static put(endpoint) {
-        return instance.put(endpoint);
+    static put(endpoint, body) {
+        return instance.put(endpoint, body);
     }
 
     static delete(endpoint) {

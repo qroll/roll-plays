@@ -26,7 +26,7 @@ class BaseController {
         });
 
         Logger.error({
-            error: errorInfo.error,
+            error: errorInfo.error || errorInfo.message,
             message: `${res.req.method} ${res.req.originalUrl} - ${
                 errorInfo.message
             }`
@@ -35,7 +35,7 @@ class BaseController {
         res.status(errorInfo.status).json({
             code: errorInfo.code,
             message: errorInfo.message,
-            error: errorInfo.error
+            error: errorInfo.error.message || errorInfo.message
         });
     }
 }
