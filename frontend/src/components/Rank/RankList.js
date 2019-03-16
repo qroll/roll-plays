@@ -6,7 +6,7 @@ import { normalize, schema } from "normalizr";
 import RankingInfo from "./RankingInfo";
 import { GRAY, ACCENT, WHITE } from "src/components/styles";
 
-import { callApi } from "src/utils/callApi";
+import { retrieveRanks } from "src/actions/rank";
 import { remove, insert, reorder } from "src/utils/arrayUtils";
 
 const RankCategory = styled.div`
@@ -85,8 +85,8 @@ class Ranking extends React.Component {
     state = { rankInfo: {}, games: {} };
 
     componentDidMount() {
-        callApi("/rank").then(res => {
-            let { rankedGames, unrankedGames } = res.data.data;
+        retrieveRanks().then(ranks => {
+            let { rankedGames, unrankedGames } = ranks;
 
             const gameSchema = new schema.Entity("games");
             const rankSchema = new schema.Entity("ranks", {

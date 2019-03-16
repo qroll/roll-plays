@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-import { callApi } from "src/utils/callApi";
+import { postToFeed } from "src/actions/feed";
 
 import { Button } from "src/components/Button";
 import Card from "src/components/Container/Card";
@@ -62,7 +62,7 @@ class FeedBox extends React.Component {
             games: this.state.games,
             tags: this.state.tags
         };
-        callApi("/post", "post", { post: form })
+        postToFeed(form)
             .then(res => {
                 this.setState({
                     submitting: false,

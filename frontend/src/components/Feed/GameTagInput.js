@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import Autocomplete from "react-autocomplete";
 
-import { callApi } from "src/utils/callApi";
+import { retrieveGames } from "src/actions/game";
 
 import { ControllerIcon } from "src/components/Icons";
 import { GRAY, WHITE, ACCENT } from "src/components/styles";
@@ -89,8 +89,7 @@ class GameTagInput extends React.Component {
     };
 
     componentDidMount() {
-        callApi("/game").then(res => {
-            let games = res.data.data;
+        retrieveGames().then(games => {
             this.setState({ games: this.normalize(games) });
         });
     }

@@ -2,10 +2,10 @@ import React from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
 
-import { GuestOrUserSession } from "src/components/Session";
+import { editRank } from "src/actions/rank";
 
-import { callApi } from "src/utils/callApi";
-import { DotsHorizontalIcon } from "../Icons";
+import { GuestOrUserSession } from "src/components/Session";
+import { DotsHorizontalIcon } from "src/components/Icons";
 import { GRAY } from "src/components/styles";
 
 const RankingName = styled.h1`
@@ -45,7 +45,7 @@ class EditableRankingInfo extends React.Component {
     handleOnToggle = () => {
         if (this.state.isEditing) {
             let { name, description } = this.state;
-            callApi("/rank", "put", { name, description });
+            editRank({ name, description });
         }
         this.setState({ isEditing: !this.state.isEditing });
     };

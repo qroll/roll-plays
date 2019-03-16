@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 import { getContrastColor } from "src/utils/color";
 import { displayTime } from "src/utils/time";
-import { callApi } from "src/utils/callApi";
+import { retrieveFeed } from "src/actions/feed";
 
 import List from "src/components/Container/List";
 import ListItem from "src/components/Container/ListItem";
@@ -93,9 +93,8 @@ class FeedList extends React.Component {
     };
 
     componentDidMount() {
-        callApi("/post").then(res => {
-            let { data } = res.data;
-            this.setState({ posts: data });
+        retrieveFeed().then(posts => {
+            this.setState({ posts });
         });
     }
 

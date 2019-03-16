@@ -7,7 +7,7 @@ class FeedService {
     }
 
     async createPost(post) {
-        let createdPost = await Post.query().insert(post);
+        let createdPost = await Post.query().insert({ data: post });
         return createdPost;
     }
 }

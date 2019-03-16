@@ -1,11 +1,11 @@
-import { callApi } from "src/utils/callApi";
+import ApiManager from "src/utils/apiManager";
 
 export const checkUserSession = () => dispatch => {
   dispatch({
     type: "USER_CHECK_SESSION"
   });
 
-  return callApi("/auth/user")
+  return ApiManager.get("/auth/user")
     .then(res => {
       if (res.status === 200) {
         dispatch({ type: "LOGIN_USER" });
@@ -21,7 +21,7 @@ export const checkUserSession = () => dispatch => {
 
 export const login = (username, password) => {
   return dispatch =>
-    callApi("/auth/login", "post", { username, password }).then(res => {
+    ApiManager.post("/auth/login", { username, password }).then(res => {
       console.log(res.data);
       dispatch({
         type: "LOGIN_USER"
@@ -31,7 +31,7 @@ export const login = (username, password) => {
 
 export const logout = () => {
   return dispatch => {
-    callApi("/auth/logout").then(res => {
+    ApiManager.get("/auth/logout").then(res => {
       console.log(res.data);
       dispatch({
         type: "LOGOUT_USER"

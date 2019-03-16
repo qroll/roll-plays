@@ -1,12 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 
-import { FormCheckbox, FormDropdown, FormTextField } from "../Form";
-import { ErrorBar } from "../ErrorBar";
-import { Button } from "../Button";
-import Card from "src/components/Container/Card";
+import { createGame } from "src/actions/game";
 
-import { callApi } from "src/utils/callApi";
+import { FormCheckbox, FormDropdown, FormTextField } from "src/components/Form";
+import { ErrorBar } from "src/components/ErrorBar";
+import { Button } from "src/components/Button";
+import Card from "src/components/Container/Card";
 
 const AddGameBox = styled(Card)`
     display: flex;
@@ -62,7 +62,7 @@ class AddGame extends React.Component {
     };
 
     handleOnClick = () => {
-        callApi("/game", "post", this.state.form)
+        createGame(this.state.form)
             .then(res => {
                 this.setState({
                     submitting: false,
@@ -125,8 +125,8 @@ class AddGame extends React.Component {
                 {this.state.submitting ? (
                     <Button disabled>Adding...</Button>
                 ) : (
-                    <Button onClick={this.handleOnClick}>Add</Button>
-                )}
+                        <Button onClick={this.handleOnClick}>Add</Button>
+                    )}
             </AddGameBox>
         );
     }

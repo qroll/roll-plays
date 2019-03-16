@@ -1,12 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 
+import { createRank } from "src/actions/rank";
+
 import { FormTextField } from "src/components/Form";
 import { ErrorBar } from "src/components/ErrorBar";
 import { Button } from "src/components/Button";
 import Card from "src/components/Container/Card";
-
-import { callApi } from "src/utils/callApi";
 
 const AddRankBox = styled(Card)`
     display: flex;
@@ -28,18 +28,16 @@ class AddRank extends React.Component {
         form: defaultFormFields
     };
 
-    handleInputChange = e => {
-        e.persist();
-
+    handleInputChange = (name, value) => {
         this.setState(prevState => {
             return {
-                form: { ...prevState.form, [e.target.name]: e.target.value }
+                form: { ...prevState.form, [name]: value }
             };
         });
     };
 
     handleOnClick = () => {
-        callApi("/rank", "post", this.state.form)
+        createRank(this.state.form)
             .then(res => {
                 this.setState({
                     submitting: false,

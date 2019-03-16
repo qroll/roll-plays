@@ -1,6 +1,6 @@
 import React from "react";
 
-import { callApi } from "src/utils/callApi";
+import { retrieveGames, editGames } from "src/actions/game";
 
 import { GameLibrary } from "./GameLibrary";
 import { GameStatusGraph } from "./GameStatusGraph";
@@ -14,8 +14,7 @@ class GameList extends React.Component {
     };
 
     componentDidMount() {
-        callApi("/game").then(res => {
-            let games = res.data.data;
+        retrieveGames().then(games => {
             this.setState({ games: games, isLoaded: true });
         });
     }
@@ -40,7 +39,7 @@ class GameList extends React.Component {
             );
         });
 
-        callApi("/game", "put", { games: changedGames })
+        editGames({ games: changedGames })
             .then(res => {
                 this.setState({
                     massEditMode: false
