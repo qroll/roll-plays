@@ -43,11 +43,12 @@ class EditableRankingInfo extends React.Component {
     };
 
     handleOnToggle = () => {
-        if (this.state.isEditing) {
+        let isEditing = this.state.isEditing;
+        if (isEditing) {
             let { name, description } = this.state;
             editRank({ name, description });
         }
-        this.setState({ isEditing: !this.state.isEditing });
+        this.setState({ isEditing: !isEditing });
     };
 
     render() {
