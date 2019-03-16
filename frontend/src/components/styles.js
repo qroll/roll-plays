@@ -1,3 +1,5 @@
+import { hexToRGB } from "src/utils/color";
+
 export const GRAY = {
     LIGHTEST: "#EEEEEE",
     LIGHTER: "#E0E0E0",
@@ -18,3 +20,8 @@ export const WHITE = "#FFFFFF";
 
 export const FONT_MAIN = `"Roboto", sans-serif`;
 export const FONT_TITLE = `"Roboto Condensed", serif`;
+
+export const RGBA = (color, opacity = 1) => {
+    let { r, g, b } = hexToRGB(color);
+    return `rgba(${r},${g},${b},${opacity})`;
+};

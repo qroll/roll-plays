@@ -1,17 +1,17 @@
 import React from "react";
 import styled from "styled-components";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { normalize, schema } from "normalizr";
 
 import RankingInfo from "./RankingInfo";
-import { GRAY, ACCENT, WHITE } from "src/components/styles";
+import { GRAY, ACCENT, WHITE, RGBA } from "src/components/styles";
 
-import { retrieveRanks } from "src/actions/rank";
+import { retrieveRanks, normalizeRanks } from "src/actions/rank";
 import { remove, insert, reorder } from "src/utils/arrayUtils";
 
 const RankCategory = styled.div`
     margin: auto;
     max-width: 460px;
+    padding-bottom: 1rem;
 `;
 
 const Item = styled.div`
@@ -24,7 +24,7 @@ const Item = styled.div`
 
 const ItemRank = styled.div`
     background-color: ${ACCENT.PRIMARY_MUTED};
-    color: #ffffff;
+    color: ${WHITE};
     display: inline-block;
     font-family: "Roboto Condensed";
     font-size: 0.8em;
@@ -34,13 +34,31 @@ const ItemRank = styled.div`
 `;
 
 const ItemTitle = styled.div`
-    color: #333333;
+    color: ${GRAY.DARKEST};
     display: inline-block;
     margin: 10px 10px 10px 0;
     vertical-align: middle;
 `;
 
-const DraggableRankItem = ({ index, rank, game = {} }) => (
+const Placeholder = styled.div`
+    align-items: center;
+    background-color: ${RGBA(WHITE, 0.7)};
+    border: 2px dotted ${GRAY.LIGHT};
+    border-radius: 3px;
+    color: ${GRAY.MEDIUM};
+    cursor: default;
+    display: flex;
+    font-size: 0.8rem;
+    font-style: italic;
+    height: 1.5rem;
+    justify-content: center;
+    margin: 10px;
+    padding: 10px;
+`;
+
+const NoGames = () => <Placeholder>No games here</Placeholder>;
+
+const RankItem = ({ index, rank, game = {} }) => (
     <Draggable draggableId={`game-${game.id}`} index={index}>
         {provided => (
             <div
@@ -66,14 +84,46 @@ const RankingList = ({ ranking, games }) => (
                         name={ranking.name}
                         description={ranking.description}
                     />
-                    {ranking.games.map((gameId, index) => (
-                        <DraggableRankItem
-                            key={gameId}
-                            index={index}
-                            rank={index + 1}
-                            game={games[gameId]}
-                        />
-                    ))}
+                    {ranking.games.length ? (
+                        ranking.games.map((gameId, index) => (
+                            <RankItem
+                                key={gameId}
+                                index={index}
+                                rank={index + 1}
+                                game={games[gameId]}
+                            />
+                        ))
+                    ) : (
+                        <NoGames />
+                    )}
+                    {provided.placeholder}
+                </RankCategory>
+            </div>
+        )}
+    </Droppable>
+);
+
+const UnrankedGameList = ({ games }) => (
+    <Droppable droppableId={"-1"}>
+        {provided => (
+            <div ref={provided.innerRef} {...provided.droppableProps}>
+                <RankCategory>
+                    <RankingInfo
+                        name="Unranked"
+                        // description=
+                    />
+                    {games.length ? (
+                        games.map((game, index) => (
+                            <RankItem
+                                key={game.id}
+                                index={index}
+                                rank={index + 1}
+                                game={game}
+                            />
+                        ))
+                    ) : (
+                        <NoGames />
+                    )}
                     {provided.placeholder}
                 </RankCategory>
             </div>
@@ -82,30 +132,19 @@ const RankingList = ({ ranking, games }) => (
 );
 
 class Ranking extends React.Component {
-    state = { rankInfo: {}, games: {} };
+    state = { rankInfo: {}, games: {}, unrankedGames: {} };
 
     componentDidMount() {
-        retrieveRanks().then(ranks => {
-            let { rankedGames, unrankedGames } = ranks;
-
-            const gameSchema = new schema.Entity("games");
-            const rankSchema = new schema.Entity("ranks", {
-                games: [gameSchema]
+        retrieveRanks()
+            .then(normalizeRanks)
+            .then(result => {
+                let { rankInfo, games, unrankedGames } = result;
+                this.setState({
+                    rankInfo,
+                    games,
+                    unrankedGames
+                });
             });
-            const gameListSchema = [gameSchema];
-            const rankListSchema = [rankSchema];
-
-            let normalizedRanks = normalize(rankedGames, rankListSchema);
-            let normalizedGames = normalize(unrankedGames, gameListSchema);
-
-            this.setState({
-                rankInfo: normalizedRanks.entities.ranks,
-                games: {
-                    ...normalizedRanks.entities.games,
-                    ...normalizedGames.entities.games
-                }
-            });
-        });
     }
 
     moveWithin = (rankInfo, source, destination) => {
@@ -181,7 +220,8 @@ class Ranking extends React.Component {
     };
 
     render() {
-        let { rankInfo, games } = this.state;
+        let { rankInfo, games, unrankedGames } = this.state;
+
         return (
             <DragDropContext onDragEnd={this.onDragEnd}>
                 {Object.values(rankInfo).map(ranking => (
@@ -192,6 +232,7 @@ class Ranking extends React.Component {
                         onDragEnd={this.onDragEnd}
                     />
                 ))}
+                <UnrankedGameList games={Object.values(unrankedGames)} />
             </DragDropContext>
         );
     }
