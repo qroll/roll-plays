@@ -177,13 +177,18 @@ export const EditableRanking = ({
 
 export const UneditableRanking = ({ rankInfo = [], gamesById = {} }) => (
     <React.Fragment>
-        {rankInfo.map(ranking => (
-            <RankingList
-                key={ranking.id || 0}
-                ranking={ranking}
-                gamesById={gamesById}
-                onDragEnd={this.onDragEnd}
-            />
-        ))}
+        {rankInfo.map(ranking => {
+            if (ranking.id < 0) {
+                return;
+            }
+            return (
+                <RankingList
+                    key={ranking.id || 0}
+                    ranking={ranking}
+                    gamesById={gamesById}
+                    onDragEnd={this.onDragEnd}
+                />
+            );
+        })}
     </React.Fragment>
 );
